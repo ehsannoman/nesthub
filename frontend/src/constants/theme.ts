@@ -1,17 +1,23 @@
 export const colors = {
-  primary: '#0D4F4E',       // dark teal — header, primary buttons
-  primaryLight: '#E6F2F1',  // light teal tint — icon backgrounds
-  background: '#F5F6F8',    // screen background (light gray)
-  card: '#FFFFFF',
-  text: '#1A1A1A',
-  textMuted: '#6B7280',
-  border: '#E5E7EB',
+  primary: '#007C83',
+  primaryDark: '#005A60',
+  primaryLight: '#E6F4F4',
 
-  success: '#16A34A',       // active, paid, resolved
-  warning: '#F59E0B',       // pending, unpaid, maintenance
-  danger: '#DC2626',        // inactive, overdue
-  info: '#2563EB',          // bookings, links
-  purple: '#7C3AED',        // packages
+  background: '#F7F9F9',
+  card: '#FFFFFF',
+  white: '#FFFFFF',
+
+  text: '#172B2D',
+  textMuted: '#667477',
+
+  border: '#E1E7E8',
+
+  success: '#16A34A',
+  warning: '#D97706',
+  error: '#DC2626',
+  info: '#2563EB',
+
+  purple: '#7C3AED',
 };
 
 export const spacing = {
