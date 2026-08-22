@@ -14,7 +14,7 @@ export const colors = {
 
   success: '#16A34A',
   warning: '#D97706',
-  error: '#DC2626',
+  danger: '#DC2626',
   info: '#2563EB',
 
   purple: '#7C3AED',

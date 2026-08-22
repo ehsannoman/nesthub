@@ -9,6 +9,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { colors, spacing, radius, typography } from '../../constants/theme';
+import { useNavigation } from '@react-navigation/native';
 
 const quickActions = [
   {
@@ -97,6 +98,7 @@ const recentNotices = [
 
 export default function ResidentDashboard() {
   const { user } = useAuth();
+  const navigation = useNavigation<any>();
 
   return (
     <View style={styles.screen}>
@@ -114,7 +116,7 @@ export default function ResidentDashboard() {
             </Text>
 
             <Text style={styles.name}>
-              {user?.name || 'Rahat Ahmed'} 👋
+              {user?.name || 'Rahat Ahmed'}
             </Text>
 
             <View style={styles.locationRow}>
@@ -267,6 +269,11 @@ export default function ResidentDashboard() {
               key={item.label}
               style={styles.quickActionCard}
               activeOpacity={0.8}
+              onPress={() => {
+                if (item.label.includes('Invite')) {
+                  navigation.navigate('InviteVisitor');
+                }
+              }}
             >
               <View style={styles.quickActionIconWrap}>
                 <Ionicons

@@ -29,6 +29,7 @@ import {
 import LoginScreen from '../screens/auth/LoginScreen';
 import ResidentDashboard from '../screens/resident/ResidentDashboard';
 import ManagerDashboard from '../screens/manager/ManagerDashboard';
+import ResidentHomeStack from './ResidentHomeStack';
 
 import { useAuth } from '../context/AuthContext';
 import { colors } from '../constants/theme';
@@ -280,7 +281,7 @@ function ResidentTabs() {
     >
       <Tab.Screen
         name="Home"
-        component={ResidentDashboard}
+        component={ResidentHomeStack}
       />
 
       <Tab.Screen name="Services">
