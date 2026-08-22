@@ -4,15 +4,11 @@ import ResidentDashboard from '../screens/resident/ResidentDashboard';
 import InviteVisitorScreen from '../screens/resident/InviteVisitorScreen';
 import ReportComplaintScreen from '../screens/resident/ReportComplaintScreen';
 import ComplaintDetailScreen from '../screens/resident/ComplaintDetailScreen';
+import BookFacilityScreen from '../screens/resident/BookFacilityScreen';
+import FacilityCalendarScreen from '../screens/resident/FacilityCalendarScreen';
+import BookingConfirmationScreen from '../screens/resident/BookingConfirmationScreen';
 
-export type ResidentHomeStackParamList = {
-  Dashboard: undefined;
-  InviteVisitor: undefined;
-  ReportComplaint: undefined;
-  ComplaintDetail: { complaint: any };
-};
-
-const Stack = createNativeStackNavigator<ResidentHomeStackParamList>();
+const Stack = createNativeStackNavigator();
 
 export default function ResidentHomeStack() {
   return (
@@ -21,6 +17,9 @@ export default function ResidentHomeStack() {
       <Stack.Screen name="InviteVisitor" component={InviteVisitorScreen} />
       <Stack.Screen name="ReportComplaint" component={ReportComplaintScreen} />
       <Stack.Screen name="ComplaintDetail" component={ComplaintDetailScreen} />
+      <Stack.Screen name="BookFacility" component={BookFacilityScreen} />
+      <Stack.Screen name="FacilityCalendar" component={FacilityCalendarScreen} />
+      <Stack.Screen name="BookingConfirmation" component={BookingConfirmationScreen} />
     </Stack.Navigator>
   );
 }

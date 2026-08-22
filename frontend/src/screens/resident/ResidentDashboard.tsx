@@ -274,6 +274,8 @@ export default function ResidentDashboard() {
                   navigation.navigate('InviteVisitor');
                 }else if (item.label.includes('Complaint')) {
                   navigation.navigate('ReportComplaint');
+                }else if (item.label.includes('Facility')) {
+                  navigation.navigate('BookFacility');
                 }
               }}
             >
