@@ -272,6 +272,8 @@ export default function ResidentDashboard() {
               onPress={() => {
                 if (item.label.includes('Invite')) {
                   navigation.navigate('InviteVisitor');
+                }else if (item.label.includes('Complaint')) {
+                  navigation.navigate('ReportComplaint');
                 }
               }}
             >
