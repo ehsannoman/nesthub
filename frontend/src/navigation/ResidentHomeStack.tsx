@@ -7,6 +7,8 @@ import ComplaintDetailScreen from '../screens/resident/ComplaintDetailScreen';
 import BookFacilityScreen from '../screens/resident/BookFacilityScreen';
 import FacilityCalendarScreen from '../screens/resident/FacilityCalendarScreen';
 import BookingConfirmationScreen from '../screens/resident/BookingConfirmationScreen';
+import BillsScreen from '../screens/resident/BillsScreen';
+import BillDetailScreen from '../screens/resident/BillDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +22,8 @@ export default function ResidentHomeStack() {
       <Stack.Screen name="BookFacility" component={BookFacilityScreen} />
       <Stack.Screen name="FacilityCalendar" component={FacilityCalendarScreen} />
       <Stack.Screen name="BookingConfirmation" component={BookingConfirmationScreen} />
+      <Stack.Screen name="Bills" component={BillsScreen} />
+      <Stack.Screen name="BillDetail" component={BillDetailScreen} />
     </Stack.Navigator>
   );
 }

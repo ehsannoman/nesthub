@@ -235,6 +235,7 @@ export default function ResidentDashboard() {
             <TouchableOpacity
               style={styles.detailsButton}
               activeOpacity={0.8}
+              onPress={() => navigation.navigate('Bills')}
             >
               <Text style={styles.detailsText}>
                 View Bill Details
@@ -276,6 +277,8 @@ export default function ResidentDashboard() {
                   navigation.navigate('ReportComplaint');
                 }else if (item.label.includes('Facility')) {
                   navigation.navigate('BookFacility');
+                } else if (item.label.includes('Bills')) {
+                  navigation.navigate('Bills');
                 }
               }}
             >
@@ -442,7 +445,7 @@ const styles = StyleSheet.create({
   },
 
   scrollContent: {
-    paddingBottom: 30,
+    paddingBottom: 120,
   },
 
   /* ================= HEADER ================= */

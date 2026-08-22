@@ -43,3 +43,19 @@ export interface Booking {
   status: BookingStatus;
   createdAt: number;
 }
+export type BillStatus = 'paid' | 'unpaid';
+
+export interface BillLineItem {
+  label: string;
+  amount: number;
+}
+
+export interface Bill {
+  id: string;
+  month: string;      // "August 2025"
+  dueDate: string;     // "10 Aug 2025"
+  totalAmount: number;
+  status: BillStatus;
+  paidDate?: string;
+  items: BillLineItem[];
+}
