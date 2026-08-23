@@ -59,3 +59,50 @@ export interface Bill {
   paidDate?: string;
   items: BillLineItem[];
 }
+export interface TodayVisitor {
+  id: string;
+  name: string;
+  flat: string;
+  time: string;
+  status: 'expected' | 'entered' | 'exited';
+}
+export interface SecurityOverview {
+  visitorsToday: number;
+  currentlyInside: number;
+  vehiclesInside: number;
+  deliveries: number;
+}
+
+export interface ExpectedVisitor {
+  id: string;
+  name: string;
+  flat: string;
+  purpose: string;
+  expectedTime: string;
+}
+
+export interface InsideVisitor {
+  id: string;
+  name: string;
+  flat: string;
+  entryTime: string;
+}
+
+export interface SecurityActivity {
+  id: string;
+  type: 'visitor_in' | 'visitor_out' | 'vehicle_in' | 'delivery_in';
+  title: string;
+  subtitle: string;
+  time: string;
+}
+
+export interface DeliveryItem {
+  id: string;
+  flat: string;
+  courier: string;
+  time: string;
+  status: 'received' | 'collected';
+}
+
+export type IncidentType =
+  | 'Security Issue' | 'Fire' | 'Medical Emergency' | 'Suspicious Activity' | 'Property Damage' | 'Other';

@@ -16,6 +16,7 @@ import { UserRole } from '../../types';
 
 const roles: { label: string; value: UserRole; icon: keyof typeof Ionicons.glyphMap }[] = [
   { label: 'Resident', value: 'resident', icon: 'home-outline' },
+  { label: 'Security', value: 'security', icon: 'shield-outline' },
   { label: 'Manager', value: 'manager', icon: 'briefcase-outline' },
 ];
 
@@ -29,9 +30,14 @@ export default function LoginScreen() {
 
   const handleLogin = () => {
     // backend connect হওয়ার আগ পর্যন্ত role manually select করে test করছি
+    const names: Record<string, string> = {
+      resident: 'Rahat Ahmed',
+      security: 'Rahim',
+      manager: 'Shahid Ahmed',
+    };
     login({
       id: '1',
-      name: selectedRole === 'manager' ? 'Shahid Ahmed' : 'Rahat Ahmed',
+      name: names[selectedRole],
       email,
       role: selectedRole,
     });
