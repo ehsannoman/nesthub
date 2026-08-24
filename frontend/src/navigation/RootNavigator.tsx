@@ -27,7 +27,7 @@ import {
 } from 'react-native-safe-area-context';
 
 import LoginScreen from '../screens/auth/LoginScreen';
-import ManagerDashboard from '../screens/manager/ManagerDashboard';
+import ManagerHomeStack from './ManagerHomeStack';
 import ResidentHomeStack from './ResidentHomeStack';
 import SecurityHomeStack from './SecurityHomeStack';
 import VisitorsScreen from '../screens/security/VisitorsScreen';
@@ -188,7 +188,7 @@ function ResidentTabs() {
 function ManagerTabs() {
   return (
     <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />} screenOptions={tabScreenOptions}>
-      <Tab.Screen name="Dashboard" component={ManagerDashboard} />
+      <Tab.Screen name="Dashboard" component={ManagerHomeStack} />
       <Tab.Screen name="Notice">{() => <PlaceholderScreen name="Notice" />}</Tab.Screen>
       <Tab.Screen name="Maintenance">{() => <PlaceholderScreen name="Maintenance" />}</Tab.Screen>
       <Tab.Screen name="Finance">{() => <PlaceholderScreen name="Finance" />}</Tab.Screen>

@@ -106,3 +106,23 @@ export interface DeliveryItem {
 
 export type IncidentType =
   | 'Security Issue' | 'Fire' | 'Medical Emergency' | 'Suspicious Activity' | 'Property Damage' | 'Other';
+
+  export type AccountRole = 'resident' | 'security' | 'maintenance' | 'manager';
+export type AccountStatus = 'active' | 'inactive';
+
+export interface ManagedUser {
+  id: string;
+  name: string;
+  email: string;
+  role: AccountRole;
+  status: AccountStatus;
+  flat?: string;
+}
+
+export interface AISummaryData {
+  openComplaints: number;
+  pendingMaintenance: number;
+  todayVisitors: number;
+  occupancyRate: number;
+  insight: string | null;
+}
