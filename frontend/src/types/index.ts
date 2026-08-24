@@ -126,3 +126,35 @@ export interface AISummaryData {
   occupancyRate: number;
   insight: string | null;
 }
+
+export interface NoticeItem {
+  id: string;
+  title: string;
+  body: string;
+  isEmergency: boolean;
+  publishedAt: number;
+}
+
+export interface BookingRequest {
+  id: string;
+  facilityName: string;
+  residentName: string;
+  flat: string;
+  date: string;
+  timeSlot: string;
+  status: 'pending' | 'approved' | 'rejected';
+}
+
+export interface ManagerComplaint extends Complaint {
+  residentName: string;
+  assignedTo?: string;
+}
+
+export interface GeneratedBill {
+  id: string;
+  flat: string;
+  month: string;
+  totalAmount: number;
+  items: BillLineItem[];
+  createdAt: number;
+}

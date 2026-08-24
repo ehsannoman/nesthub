@@ -192,6 +192,12 @@ export default function ManagerDashboard() {
               activeOpacity={0.8}
               onPress={() => {
                 if (item.label === 'Add User') navigation.navigate('UserManagement');
+                else if (item.label === 'Add Notice') navigation.navigate('CreateNotice');
+                else if (item.label === 'Create Bill') navigation.navigate('CreateBill');
+                else if (item.label === 'Visitor Log') navigation.navigate('VisitorLog');
+                else if (item.label === 'Add Complaint' || item.label === 'Maintenance Request') navigation.navigate('Maintenance');
+                else if (item.label === 'Facility Booking') navigation.navigate('FacilityBookings');
+                else if (item.label === 'Generate Report') navigation.navigate('AIAssistant');
               }}
             >
               <View style={styles.quickIcon}>

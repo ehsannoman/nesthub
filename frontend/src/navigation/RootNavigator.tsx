@@ -34,6 +34,10 @@ import VisitorsScreen from '../screens/security/VisitorsScreen';
 import VehicleCheckScreen from '../screens/security/VehicleCheckScreen';
 import DeliveriesScreen from '../screens/security/DeliveriesScreen';
 import MoreScreen from '../screens/security/MoreScreen';
+import NoticeScreen from '../screens/manager/NoticeScreen';
+import MaintenanceScreen from '../screens/manager/MaintenanceScreen';
+import FinanceScreen from '../screens/manager/FinanceScreen';
+import ManagerMoreScreen from '../screens/manager/ManagerMoreScreen';
 
 import { useAuth } from '../context/AuthContext';
 import { colors } from '../constants/theme';
@@ -189,10 +193,10 @@ function ManagerTabs() {
   return (
     <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />} screenOptions={tabScreenOptions}>
       <Tab.Screen name="Dashboard" component={ManagerHomeStack} />
-      <Tab.Screen name="Notice">{() => <PlaceholderScreen name="Notice" />}</Tab.Screen>
-      <Tab.Screen name="Maintenance">{() => <PlaceholderScreen name="Maintenance" />}</Tab.Screen>
-      <Tab.Screen name="Finance">{() => <PlaceholderScreen name="Finance" />}</Tab.Screen>
-      <Tab.Screen name="More">{() => <PlaceholderScreen name="More" />}</Tab.Screen>
+      <Tab.Screen name="Notice" component={NoticeScreen} />
+      <Tab.Screen name="Maintenance" component={MaintenanceScreen} />
+      <Tab.Screen name="Finance" component={FinanceScreen} />
+      <Tab.Screen name="More" component={ManagerMoreScreen} />
     </Tab.Navigator>
   );
 }
