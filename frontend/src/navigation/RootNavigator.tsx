@@ -38,6 +38,10 @@ import NoticeScreen from '../screens/manager/NoticeScreen';
 import MaintenanceScreen from '../screens/manager/MaintenanceScreen';
 import FinanceScreen from '../screens/manager/FinanceScreen';
 import ManagerMoreScreen from '../screens/manager/ManagerMoreScreen';
+import ServicesScreen from '../screens/resident/ServicesScreen';
+import ActivityScreen from '../screens/resident/ActivityScreen';
+import NotificationsScreen from '../screens/resident/NotificationsScreen';
+import ProfileScreen from '../screens/resident/ProfileScreen';
 
 import { useAuth } from '../context/AuthContext';
 import { colors } from '../constants/theme';
@@ -181,10 +185,10 @@ function ResidentTabs() {
   return (
     <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />} screenOptions={tabScreenOptions}>
       <Tab.Screen name="Home" component={ResidentHomeStack} />
-      <Tab.Screen name="Services">{() => <PlaceholderScreen name="Services" />}</Tab.Screen>
-      <Tab.Screen name="Activity">{() => <PlaceholderScreen name="Activity" />}</Tab.Screen>
-      <Tab.Screen name="Notifications">{() => <PlaceholderScreen name="Notifications" />}</Tab.Screen>
-      <Tab.Screen name="Profile">{() => <PlaceholderScreen name="Profile" />}</Tab.Screen>
+      <Tab.Screen name="Services" component={ServicesScreen} />
+      <Tab.Screen name="Activity" component={ActivityScreen} />
+      <Tab.Screen name="Notifications" component={NotificationsScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }

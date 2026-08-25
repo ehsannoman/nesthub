@@ -158,3 +158,34 @@ export interface GeneratedBill {
   items: BillLineItem[];
   createdAt: number;
 }
+export interface AppNotification {
+  id: string;
+  title: string;
+  body: string;
+  type: 'visitor' | 'complaint' | 'bill' | 'booking' | 'notice' | 'package';
+  read: boolean;
+  time: string;
+}
+
+export interface ActivityItem {
+  id: string;
+  type: 'visitor' | 'complaint' | 'booking' | 'bill' | 'package';
+  title: string;
+  subtitle: string;
+  time: string;
+  icon: string;
+}
+
+export interface FamilyMember {
+  id: string;
+  name: string;
+  relation: string;
+  phone: string;
+}
+
+export interface Vehicle {
+  id: string;
+  plateNumber: string;
+  type: 'Car' | 'Motorcycle' | 'Other';
+  model?: string;
+}

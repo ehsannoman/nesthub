@@ -373,10 +373,8 @@ export default function ResidentDashboard() {
             Recent Notices
           </Text>
 
-          <TouchableOpacity activeOpacity={0.7}>
-            <Text style={styles.viewAll}>
-              View All
-            </Text>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Notices')}>
+          <Text style={styles.viewAll}>View All</Text>
           </TouchableOpacity>
         </View>
 
