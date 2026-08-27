@@ -114,9 +114,21 @@ export interface ManagedUser {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   role: AccountRole;
   status: AccountStatus;
+
+  // Resident-specific
   flat?: string;
+  ownershipType?: 'Owner' | 'Tenant';
+  moveInDate?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  emergencyContactRelation?: string;
+
+  // Security/Maintenance-specific
+  employeeId?: string;
+  joiningDate?: string;
 }
 
 export interface AISummaryData {

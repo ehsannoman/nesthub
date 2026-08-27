@@ -30,12 +30,24 @@ export default function UserManagementScreen() {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Add user form state
+  // Common fields
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [flat, setFlat] = useState('');
+  const [phone, setPhone] = useState('');
   const [role, setRole] = useState<AccountRole>('resident');
   const [creating, setCreating] = useState(false);
+
+  // Resident-only fields
+  const [flat, setFlat] = useState('');
+  const [ownershipType, setOwnershipType] = useState<'Owner' | 'Tenant'>('Owner');
+  const [moveInDate, setMoveInDate] = useState('');
+  const [emergencyName, setEmergencyName] = useState('');
+  const [emergencyPhone, setEmergencyPhone] = useState('');
+  const [emergencyRelation, setEmergencyRelation] = useState('');
+
+  // Security/Maintenance-only fields
+  const [employeeId, setEmployeeId] = useState('');
+  const [joiningDate, setJoiningDate] = useState('');
 
   const loadUsers = () => {
     getUsers().then((data) => {
@@ -53,13 +65,33 @@ export default function UserManagementScreen() {
     return matchesRole && matchesSearch;
   });
 
+  const resetForm = () => {
+    setName(''); setEmail(''); setPhone(''); setRole('resident');
+    setFlat(''); setOwnershipType('Owner'); setMoveInDate('');
+    setEmergencyName(''); setEmergencyPhone(''); setEmergencyRelation('');
+    setEmployeeId(''); setJoiningDate('');
+  };
+
   const handleCreate = async () => {
     if (!name.trim() || !email.trim() || creating) return;
     setCreating(true);
-    await createUser({ name, email, role, flat: flat || undefined });
+    await createUser({
+      name,
+      email,
+      phone: phone || undefined,
+      role,
+      flat: role === 'resident' ? flat || undefined : undefined,
+      ownershipType: role === 'resident' ? ownershipType : undefined,
+      moveInDate: role === 'resident' ? moveInDate || undefined : undefined,
+      emergencyContactName: role === 'resident' ? emergencyName || undefined : undefined,
+      emergencyContactPhone: role === 'resident' ? emergencyPhone || undefined : undefined,
+      emergencyContactRelation: role === 'resident' ? emergencyRelation || undefined : undefined,
+      employeeId: role === 'security' || role === 'maintenance' ? employeeId || undefined : undefined,
+      joiningDate: role === 'security' || role === 'maintenance' ? joiningDate || undefined : undefined,
+    });
     setCreating(false);
     setModalVisible(false);
-    setName(''); setEmail(''); setFlat(''); setRole('resident');
+    resetForm();
     loadUsers();
   };
 
@@ -112,6 +144,12 @@ export default function UserManagementScreen() {
               <View style={{ flex: 1 }}>
                 <Text style={styles.userName}>{u.name}</Text>
                 <Text style={styles.userEmail}>{u.email}</Text>
+                {u.role === 'resident' && u.flat ? (
+                  <Text style={styles.userMeta}>Flat {u.flat} · {u.ownershipType}</Text>
+                ) : null}
+                {(u.role === 'security' || u.role === 'maintenance') && u.employeeId ? (
+                  <Text style={styles.userMeta}>ID: {u.employeeId}</Text>
+                ) : null}
               </View>
               <View style={{ alignItems: 'flex-end', gap: 4 }}>
                 <View style={[styles.roleBadge, { backgroundColor: roleBadgeColor[u.role].bg }]}>
@@ -141,13 +179,8 @@ export default function UserManagementScreen() {
               </TouchableOpacity>
             </View>
 
-            <ScrollView>
-              <Text style={styles.label}>Full Name</Text>
-              <TextInput style={styles.input} placeholder="Enter full name" placeholderTextColor={colors.textMuted} value={name} onChangeText={setName} />
-
-              <Text style={styles.label}>Email</Text>
-              <TextInput style={styles.input} placeholder="Enter email address" placeholderTextColor={colors.textMuted} value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
-
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {/* Role selector first — বাকি form টা এর ওপর নির্ভর করবে */}
               <Text style={styles.label}>Role</Text>
               <View style={styles.roleGrid}>
                 {roleOptions.map((r) => (
@@ -159,10 +192,60 @@ export default function UserManagementScreen() {
                 ))}
               </View>
 
+              <Text style={styles.label}>Full Name</Text>
+              <TextInput style={styles.input} placeholder="Enter full name" placeholderTextColor={colors.textMuted} value={name} onChangeText={setName} />
+
+              <Text style={styles.label}>Email</Text>
+              <TextInput style={styles.input} placeholder="Enter email address" placeholderTextColor={colors.textMuted} value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
+
+              <Text style={styles.label}>Phone Number (Optional)</Text>
+              <TextInput style={styles.input} placeholder="017XXXXXXXX" placeholderTextColor={colors.textMuted} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+
+              {/* ===== Resident-only fields ===== */}
               {role === 'resident' && (
                 <>
-                  <Text style={styles.label}>Flat Number</Text>
+                  <View style={styles.sectionDivider}>
+                    <Text style={styles.sectionDividerText}>Resident Details</Text>
+                  </View>
+
+                  <Text style={styles.label}>Flat / Unit Number</Text>
                   <TextInput style={styles.input} placeholder="e.g. B-803" placeholderTextColor={colors.textMuted} value={flat} onChangeText={setFlat} />
+
+                  <Text style={styles.label}>Ownership Type</Text>
+                  <View style={styles.roleGrid}>
+                    {(['Owner', 'Tenant'] as const).map((t) => (
+                      <TouchableOpacity key={t} style={[styles.roleOption, ownershipType === t && styles.roleOptionActive]} onPress={() => setOwnershipType(t)}>
+                        <Text style={[styles.roleOptionText, ownershipType === t && styles.roleOptionTextActive]}>{t}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+
+                  <Text style={styles.label}>Move-in Date</Text>
+                  <TextInput style={styles.input} placeholder="DD/MM/YYYY" placeholderTextColor={colors.textMuted} value={moveInDate} onChangeText={setMoveInDate} />
+
+                  <Text style={styles.label}>Emergency Contact Name</Text>
+                  <TextInput style={styles.input} placeholder="Contact person's name" placeholderTextColor={colors.textMuted} value={emergencyName} onChangeText={setEmergencyName} />
+
+                  <Text style={styles.label}>Emergency Contact Phone</Text>
+                  <TextInput style={styles.input} placeholder="017XXXXXXXX" placeholderTextColor={colors.textMuted} value={emergencyPhone} onChangeText={setEmergencyPhone} keyboardType="phone-pad" />
+
+                  <Text style={styles.label}>Relation</Text>
+                  <TextInput style={styles.input} placeholder="e.g. Spouse, Parent, Sibling" placeholderTextColor={colors.textMuted} value={emergencyRelation} onChangeText={setEmergencyRelation} />
+                </>
+              )}
+
+              {/* ===== Security/Maintenance-only fields ===== */}
+              {(role === 'security' || role === 'maintenance') && (
+                <>
+                  <View style={styles.sectionDivider}>
+                    <Text style={styles.sectionDividerText}>Staff Details</Text>
+                  </View>
+
+                  <Text style={styles.label}>Employee ID</Text>
+                  <TextInput style={styles.input} placeholder="e.g. EMP-0142" placeholderTextColor={colors.textMuted} value={employeeId} onChangeText={setEmployeeId} />
+
+                  <Text style={styles.label}>Joining Date</Text>
+                  <TextInput style={styles.input} placeholder="DD/MM/YYYY" placeholderTextColor={colors.textMuted} value={joiningDate} onChangeText={setJoiningDate} />
                 </>
               )}
 
@@ -207,6 +290,7 @@ const styles = StyleSheet.create({
   avatarText: { fontSize: 13, fontWeight: '700', color: colors.primary },
   userName: { fontSize: 14, fontWeight: '700', color: colors.text },
   userEmail: { fontSize: 12, color: colors.textMuted, marginTop: 2 },
+  userMeta: { fontSize: 11, color: colors.textMuted, marginTop: 2 },
   roleBadge: { borderRadius: radius.full, paddingHorizontal: 10, paddingVertical: 3 },
   roleBadgeText: { fontSize: 10.5, fontWeight: '700' },
   statusBadge: { backgroundColor: '#EAF7EE', borderRadius: radius.full, paddingHorizontal: 10, paddingVertical: 3 },
@@ -215,7 +299,7 @@ const styles = StyleSheet.create({
   statusBadgeTextInactive: { color: colors.danger },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  modalCard: { backgroundColor: colors.background, borderTopLeftRadius: radius.lg, borderTopRightRadius: radius.lg, padding: spacing.lg, maxHeight: '85%' },
+  modalCard: { backgroundColor: colors.background, borderTopLeftRadius: radius.lg, borderTopRightRadius: radius.lg, padding: spacing.lg, maxHeight: '88%' },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md },
   modalTitle: { fontSize: 18, fontWeight: '700', color: colors.text },
 
@@ -227,6 +311,9 @@ const styles = StyleSheet.create({
   roleOptionActive: { backgroundColor: colors.primary, borderColor: colors.primary },
   roleOptionText: { fontSize: 12.5, fontWeight: '600', color: colors.text },
   roleOptionTextActive: { color: '#fff' },
+
+  sectionDivider: { marginTop: spacing.lg, marginBottom: spacing.xs, borderTopWidth: 1, borderTopColor: colors.border, paddingTop: spacing.sm },
+  sectionDividerText: { fontSize: 12, fontWeight: '700', color: colors.textMuted, textTransform: 'uppercase' },
 
   noteBox: { flexDirection: 'row', gap: 8, backgroundColor: '#EAF2FF', borderRadius: radius.md, padding: spacing.sm, marginTop: spacing.md, alignItems: 'flex-start' },
   noteText: { flex: 1, fontSize: 12, color: colors.info },

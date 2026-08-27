@@ -25,12 +25,19 @@ export async function getUsers(): Promise<ManagedUser[]> {
 interface CreateUserPayload {
   name: string;
   email: string;
+  phone?: string;
   role: AccountRole;
   flat?: string;
-  phone?: string;
+  ownershipType?: 'Owner' | 'Tenant';
+  moveInDate?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  emergencyContactRelation?: string;
+  employeeId?: string;
+  joiningDate?: string;
 }
 
-// TODO (backend integration): replace করো — POST /api/users
+// TODO (backend integration): replace করো — POST /api/users (শুধু manager access করতে পারবে)
 // backend এই ইউজারের জন্য login credentials generate করে email এ পাঠাবে
 export async function createUser(payload: CreateUserPayload): Promise<ManagedUser> {
   await new Promise((r) => setTimeout(r, 700));
@@ -38,9 +45,17 @@ export async function createUser(payload: CreateUserPayload): Promise<ManagedUse
     id: `U-${Date.now()}`,
     name: payload.name,
     email: payload.email,
+    phone: payload.phone,
     role: payload.role,
     status: 'active',
     flat: payload.flat,
+    ownershipType: payload.ownershipType,
+    moveInDate: payload.moveInDate,
+    emergencyContactName: payload.emergencyContactName,
+    emergencyContactPhone: payload.emergencyContactPhone,
+    emergencyContactRelation: payload.emergencyContactRelation,
+    employeeId: payload.employeeId,
+    joiningDate: payload.joiningDate,
   };
   mockUsers = [newUser, ...mockUsers];
   return newUser;
