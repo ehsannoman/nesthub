@@ -7,40 +7,36 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 import { useAuth } from '../../context/AuthContext';
 import { colors, radius } from '../../constants/theme';
-import { UserRole } from '../../types';
-
-const roles: { label: string; value: UserRole; icon: keyof typeof Ionicons.glyphMap }[] = [
-  { label: 'Resident', value: 'resident', icon: 'home-outline' },
-  { label: 'Security', value: 'security', icon: 'shield-outline' },
-  { label: 'Manager', value: 'manager', icon: 'briefcase-outline' },
-];
+import { login as loginApi } from '../../api/authService';
 
 export default function LoginScreen() {
+  const navigation = useNavigation<any>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<UserRole>('resident');
+  const [submitting, setSubmitting] = useState(false);
 
   const { login } = useAuth();
 
-  const handleLogin = () => {
-    // backend connect হওয়ার আগ পর্যন্ত role manually select করে test করছি
-    const names: Record<string, string> = {
-      resident: 'Rahat Ahmed',
-      security: 'Rahim',
-      manager: 'Shahid Ahmed',
-    };
-    login({
-      id: '1',
-      name: names[selectedRole],
-      email,
-      role: selectedRole,
-    });
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim() || submitting) return;
+    setSubmitting(true);
+    try {
+      const data = await loginApi(email, password);
+      await login(data.user, data.token);
+    } catch (err: any) {
+      Alert.alert('Login Failed', err.message || 'Invalid email or password');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -130,57 +126,15 @@ export default function LoginScreen() {
             />
 
             <TouchableOpacity
-              onPress={() =>
-                setShowPassword(!showPassword)
-              }
+              onPress={() => setShowPassword(!showPassword)}
               activeOpacity={0.7}
             >
               <Ionicons
-                name={
-                  showPassword
-                    ? 'eye-off-outline'
-                    : 'eye-outline'
-                }
+                name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                 size={20}
                 color={colors.textMuted}
               />
             </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Role selector — test only, backend connect হলে সরিয়ে দেওয়া হবে */}
-
-        <View style={styles.field}>
-          <Text style={styles.label}>
-            Login as (test only)
-          </Text>
-
-          <View style={styles.roleRow}>
-            {roles.map((r) => (
-              <TouchableOpacity
-                key={r.value}
-                style={[
-                  styles.roleChip,
-                  selectedRole === r.value && styles.roleChipActive,
-                ]}
-                onPress={() => setSelectedRole(r.value)}
-                activeOpacity={0.8}
-              >
-                <Ionicons
-                  name={r.icon}
-                  size={14}
-                  color={selectedRole === r.value ? '#FFFFFF' : colors.textMuted}
-                />
-                <Text
-                  style={[
-                    styles.roleChipText,
-                    selectedRole === r.value && styles.roleChipTextActive,
-                  ]}
-                >
-                  {r.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
           </View>
         </View>
 
@@ -201,18 +155,37 @@ export default function LoginScreen() {
           style={styles.button}
           onPress={handleLogin}
           activeOpacity={0.85}
+          disabled={submitting}
         >
-          <Text style={styles.buttonText}>
-            Sign In
-          </Text>
+          {submitting ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Text style={styles.buttonText}>
+                Sign In
+              </Text>
 
-          <View style={styles.buttonIcon}>
-            <Ionicons
-              name="arrow-forward"
-              size={18}
-              color={colors.primary}
-            />
-          </View>
+              <View style={styles.buttonIcon}>
+                <Ionicons
+                  name="arrow-forward"
+                  size={18}
+                  color={colors.primary}
+                />
+              </View>
+            </>
+          )}
+        </TouchableOpacity>
+
+        {/* Signup link — শুধু Manager/Owner দের জন্য */}
+
+        <TouchableOpacity
+          style={styles.signupLink}
+          onPress={() => navigation.navigate('Signup')}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.signupLinkText}>
+            Registering a new building? <Text style={styles.signupLinkBold}>Sign up as Manager</Text>
+          </Text>
         </TouchableOpacity>
 
         {/* Security */}
@@ -346,44 +319,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
 
-  /* ================= ROLE SELECTOR ================= */
-
-  roleRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-
-  roleChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.full,
-
-    paddingHorizontal: 13,
-    paddingVertical: 9,
-
-    backgroundColor: '#FFFFFF',
-  },
-
-  roleChipActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-
-  roleChipText: {
-    fontSize: 12.5,
-    fontWeight: '600',
-    color: colors.textMuted,
-  },
-
-  roleChipTextActive: {
-    color: '#FFFFFF',
-  },
-
   /* ================= FORGOT ================= */
 
   forgotButton: {
@@ -441,6 +376,23 @@ const styles = StyleSheet.create({
 
     alignItems: 'center',
     justifyContent: 'center',
+  },
+
+  /* ================= SIGNUP LINK ================= */
+
+  signupLink: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+
+  signupLinkText: {
+    color: colors.textMuted,
+    fontSize: 13,
+  },
+
+  signupLinkBold: {
+    color: colors.primary,
+    fontWeight: '700',
   },
 
   /* ================= SECURITY ================= */

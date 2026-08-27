@@ -42,7 +42,7 @@ import ServicesScreen from '../screens/resident/ServicesScreen';
 import ActivityScreen from '../screens/resident/ActivityScreen';
 import NotificationsScreen from '../screens/resident/NotificationsScreen';
 import ProfileScreen from '../screens/resident/ProfileScreen';
-
+import SignupScreen from '../screens/auth/SignupScreen';
 import { useAuth } from '../context/AuthContext';
 import { colors } from '../constants/theme';
 
@@ -218,13 +218,20 @@ function SecurityTabs() {
 }
 
 export default function RootNavigator() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return null; 
+  }
 
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!user ? (
+          <>
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Signup" component={SignupScreen} />
+          </>
         ) : user.role === 'manager' ? (
           <Stack.Screen name="ManagerTabs" component={ManagerTabs} />
         ) : user.role === 'security' ? (
