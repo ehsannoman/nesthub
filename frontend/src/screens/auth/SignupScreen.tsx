@@ -5,9 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   ActivityIndicator,
   Alert,
 } from 'react-native';
@@ -17,6 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { colors, radius, spacing } from '../../constants/theme';
 import { registerManager } from '../../api/authService';
+import KeyboardScreen from '../../components/KeyboardScreen';
 
 export default function SignupScreen() {
   const navigation = useNavigation<any>();
@@ -62,126 +60,123 @@ export default function SignupScreen() {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView contentContainerStyle={styles.container}>
+    <KeyboardScreen contentContainerStyle={styles.container}>
 
-        <View style={styles.brandSection}>
-          <View style={styles.logo}>
-            <Ionicons name="business" size={25} color="#FFFFFF" />
-          </View>
-          <Text style={styles.brand}>NestHub</Text>
+      <View style={styles.brandSection}>
+        <View style={styles.logo}>
+          <Ionicons name="business" size={25} color="#FFFFFF" />
         </View>
+        <Text style={styles.brand}>NestHub</Text>
+      </View>
 
-        <View style={styles.headingSection}>
-          <Text style={styles.heading}>Register Your Building</Text>
-          <Text style={styles.subheading}>Create your manager account and set up your community</Text>
+      <View style={styles.headingSection}>
+        <Text style={styles.heading}>Register Your Building</Text>
+        <Text style={styles.subheading}>Create your manager account and set up your community</Text>
+      </View>
+
+      <Text style={styles.sectionLabel}>Your Details</Text>
+
+      <View style={styles.field}>
+        <Text style={styles.label}>Full Name</Text>
+        <View style={styles.inputContainer}>
+          <Ionicons name="person-outline" size={19} color={colors.textMuted} />
+          <TextInput style={styles.input} placeholder="Your name" placeholderTextColor={colors.textMuted} value={name} onChangeText={setName} />
         </View>
+      </View>
 
-        <Text style={styles.sectionLabel}>Your Details</Text>
+      <View style={styles.field}>
+        <Text style={styles.label}>Email address</Text>
+        <View style={styles.inputContainer}>
+          <Ionicons name="mail-outline" size={19} color={colors.textMuted} />
+          <TextInput
+            style={styles.input}
+            placeholder="you@example.com"
+            placeholderTextColor={colors.textMuted}
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
+        </View>
+      </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Full Name</Text>
+      <View style={styles.field}>
+        <Text style={styles.label}>Phone (Optional)</Text>
+        <View style={styles.inputContainer}>
+          <Ionicons name="call-outline" size={19} color={colors.textMuted} />
+          <TextInput style={styles.input} placeholder="017XXXXXXXX" placeholderTextColor={colors.textMuted} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+        </View>
+      </View>
+
+      <View style={styles.field}>
+        <Text style={styles.label}>Password</Text>
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={19} color={colors.textMuted} />
+          <TextInput
+            style={styles.input}
+            placeholder="At least 6 characters"
+            placeholderTextColor={colors.textMuted}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+          />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color={colors.textMuted} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <Text style={styles.sectionLabel}>Building Details</Text>
+
+      <View style={styles.field}>
+        <Text style={styles.label}>Building Name</Text>
+        <View style={styles.inputContainer}>
+          <Ionicons name="business-outline" size={19} color={colors.textMuted} />
+          <TextInput style={styles.input} placeholder="e.g. Green Valley Residency" placeholderTextColor={colors.textMuted} value={buildingName} onChangeText={setBuildingName} />
+        </View>
+      </View>
+
+      <View style={styles.field}>
+        <Text style={styles.label}>Building Address</Text>
+        <View style={styles.inputContainer}>
+          <Ionicons name="location-outline" size={19} color={colors.textMuted} />
+          <TextInput style={styles.input} placeholder="Road, Block, City" placeholderTextColor={colors.textMuted} value={buildingAddress} onChangeText={setBuildingAddress} />
+        </View>
+      </View>
+
+      <View style={styles.row}>
+        <View style={[styles.field, styles.half]}>
+          <Text style={styles.label}>Total Floors</Text>
           <View style={styles.inputContainer}>
-            <Ionicons name="person-outline" size={19} color={colors.textMuted} />
-            <TextInput style={styles.input} placeholder="Your name" placeholderTextColor={colors.textMuted} value={name} onChangeText={setName} />
+            <TextInput style={styles.input} placeholder="12" placeholderTextColor={colors.textMuted} value={totalFloors} onChangeText={setTotalFloors} keyboardType="numeric" />
           </View>
         </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Email address</Text>
+        <View style={[styles.field, styles.half]}>
+          <Text style={styles.label}>Total Flats</Text>
           <View style={styles.inputContainer}>
-            <Ionicons name="mail-outline" size={19} color={colors.textMuted} />
-            <TextInput
-              style={styles.input}
-              placeholder="you@example.com"
-              placeholderTextColor={colors.textMuted}
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
+            <TextInput style={styles.input} placeholder="60" placeholderTextColor={colors.textMuted} value={totalFlats} onChangeText={setTotalFlats} keyboardType="numeric" />
           </View>
         </View>
+      </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Phone (Optional)</Text>
-          <View style={styles.inputContainer}>
-            <Ionicons name="call-outline" size={19} color={colors.textMuted} />
-            <TextInput style={styles.input} placeholder="017XXXXXXXX" placeholderTextColor={colors.textMuted} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
-          </View>
-        </View>
+      <TouchableOpacity style={[styles.button, !canSubmit && styles.buttonDisabled]} onPress={handleSignup} disabled={!canSubmit || submitting}>
+        {submitting ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Create Account</Text>
+        )}
+      </TouchableOpacity>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Password</Text>
-          <View style={styles.inputContainer}>
-            <Ionicons name="lock-closed-outline" size={19} color={colors.textMuted} />
-            <TextInput
-              style={styles.input}
-              placeholder="At least 6 characters"
-              placeholderTextColor={colors.textMuted}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-            />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color={colors.textMuted} />
-            </TouchableOpacity>
-          </View>
-        </View>
+      <TouchableOpacity style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.loginLinkText}>Already have an account? <Text style={styles.loginLinkBold}>Sign In</Text></Text>
+      </TouchableOpacity>
 
-        <Text style={styles.sectionLabel}>Building Details</Text>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Building Name</Text>
-          <View style={styles.inputContainer}>
-            <Ionicons name="business-outline" size={19} color={colors.textMuted} />
-            <TextInput style={styles.input} placeholder="e.g. Green Valley Residency" placeholderTextColor={colors.textMuted} value={buildingName} onChangeText={setBuildingName} />
-          </View>
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Building Address</Text>
-          <View style={styles.inputContainer}>
-            <Ionicons name="location-outline" size={19} color={colors.textMuted} />
-            <TextInput style={styles.input} placeholder="Road, Block, City" placeholderTextColor={colors.textMuted} value={buildingAddress} onChangeText={setBuildingAddress} />
-          </View>
-        </View>
-
-        <View style={styles.row}>
-          <View style={[styles.field, styles.half]}>
-            <Text style={styles.label}>Total Floors</Text>
-            <View style={styles.inputContainer}>
-              <TextInput style={styles.input} placeholder="12" placeholderTextColor={colors.textMuted} value={totalFloors} onChangeText={setTotalFloors} keyboardType="numeric" />
-            </View>
-          </View>
-          <View style={[styles.field, styles.half]}>
-            <Text style={styles.label}>Total Flats</Text>
-            <View style={styles.inputContainer}>
-              <TextInput style={styles.input} placeholder="60" placeholderTextColor={colors.textMuted} value={totalFlats} onChangeText={setTotalFlats} keyboardType="numeric" />
-            </View>
-          </View>
-        </View>
-
-        <TouchableOpacity style={[styles.button, !canSubmit && styles.buttonDisabled]} onPress={handleSignup} disabled={!canSubmit || submitting}>
-          {submitting ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Create Account</Text>
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.loginLinkText}>Already have an account? <Text style={styles.loginLinkBold}>Sign In</Text></Text>
-        </TouchableOpacity>
-
-      </ScrollView>
-    </KeyboardAvoidingView>
+    </KeyboardScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
-  container: { padding: 24, paddingTop: 60, paddingBottom: 40 },
+  container: { paddingHorizontal: 24, paddingTop: 60 },
 
   brandSection: { alignItems: 'center', marginBottom: 24 },
   logo: {

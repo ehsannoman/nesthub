@@ -5,8 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
   ActivityIndicator,
   Alert,
 } from 'react-native';
@@ -16,6 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { colors, radius } from '../../constants/theme';
 import { login as loginApi } from '../../api/authService';
+import KeyboardScreen from '../../components/KeyboardScreen';
 
 export default function LoginScreen() {
   const navigation = useNavigation<any>();
@@ -40,183 +39,172 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.screen}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <View style={styles.container}>
+    <KeyboardScreen contentContainerStyle={styles.container}>
 
-        {/* Brand */}
+      {/* Brand */}
 
-        <View style={styles.brandSection}>
-          <View style={styles.logo}>
-            <Ionicons
-              name="home"
-              size={25}
-              color="#FFFFFF"
-            />
-          </View>
-
-          <Text style={styles.brand}>
-            NestHub
-          </Text>
-        </View>
-
-        {/* Heading */}
-
-        <View style={styles.headingSection}>
-          <Text style={styles.heading}>
-            Welcome back
-          </Text>
-
-          <Text style={styles.subheading}>
-            Sign in to continue to your community
-          </Text>
-        </View>
-
-        {/* Email */}
-
-        <View style={styles.field}>
-          <Text style={styles.label}>
-            Email address
-          </Text>
-
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name="mail-outline"
-              size={19}
-              color={colors.textMuted}
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder="you@example.com"
-              placeholderTextColor={colors.textMuted}
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="email-address"
-            />
-          </View>
-        </View>
-
-        {/* Password */}
-
-        <View style={styles.field}>
-          <Text style={styles.label}>
-            Password
-          </Text>
-
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name="lock-closed-outline"
-              size={19}
-              color={colors.textMuted}
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your password"
-              placeholderTextColor={colors.textMuted}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-              autoCapitalize="none"
-            />
-
-            <TouchableOpacity
-              onPress={() => setShowPassword(!showPassword)}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                size={20}
-                color={colors.textMuted}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Forgot Password */}
-
-        <TouchableOpacity
-          style={styles.forgotButton}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.forgotText}>
-            Forgot password?
-          </Text>
-        </TouchableOpacity>
-
-        {/* Sign In */}
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleLogin}
-          activeOpacity={0.85}
-          disabled={submitting}
-        >
-          {submitting ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <>
-              <Text style={styles.buttonText}>
-                Sign In
-              </Text>
-
-              <View style={styles.buttonIcon}>
-                <Ionicons
-                  name="arrow-forward"
-                  size={18}
-                  color={colors.primary}
-                />
-              </View>
-            </>
-          )}
-        </TouchableOpacity>
-
-        {/* Signup link — শুধু Manager/Owner দের জন্য */}
-
-        <TouchableOpacity
-          style={styles.signupLink}
-          onPress={() => navigation.navigate('Signup')}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.signupLinkText}>
-            Registering a new building? <Text style={styles.signupLinkBold}>Sign up as Manager</Text>
-          </Text>
-        </TouchableOpacity>
-
-        {/* Security */}
-
-        <View style={styles.security}>
+      <View style={styles.brandSection}>
+        <View style={styles.logo}>
           <Ionicons
-            name="shield-checkmark-outline"
-            size={15}
-            color={colors.primary}
+            name="home"
+            size={25}
+            color="#FFFFFF"
+          />
+        </View>
+
+        <Text style={styles.brand}>
+          NestHub
+        </Text>
+      </View>
+
+      {/* Heading */}
+
+      <View style={styles.headingSection}>
+        <Text style={styles.heading}>
+          Welcome back
+        </Text>
+
+        <Text style={styles.subheading}>
+          Sign in to continue to your community
+        </Text>
+      </View>
+
+      {/* Email */}
+
+      <View style={styles.field}>
+        <Text style={styles.label}>
+          Email address
+        </Text>
+
+        <View style={styles.inputContainer}>
+          <Ionicons
+            name="mail-outline"
+            size={19}
+            color={colors.textMuted}
           />
 
-          <Text style={styles.securityText}>
-            Secure and private community access
-          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="you@example.com"
+            placeholderTextColor={colors.textMuted}
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="email-address"
+          />
         </View>
-
       </View>
-    </KeyboardAvoidingView>
+
+      {/* Password */}
+
+      <View style={styles.field}>
+        <Text style={styles.label}>
+          Password
+        </Text>
+
+        <View style={styles.inputContainer}>
+          <Ionicons
+            name="lock-closed-outline"
+            size={19}
+            color={colors.textMuted}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your password"
+            placeholderTextColor={colors.textMuted}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+            autoCapitalize="none"
+          />
+
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+              size={20}
+              color={colors.textMuted}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Forgot Password */}
+
+      <TouchableOpacity
+        style={styles.forgotButton}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.forgotText}>
+          Forgot password?
+        </Text>
+      </TouchableOpacity>
+
+      {/* Sign In */}
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleLogin}
+        activeOpacity={0.85}
+        disabled={submitting}
+      >
+        {submitting ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <>
+            <Text style={styles.buttonText}>
+              Sign In
+            </Text>
+
+            <View style={styles.buttonIcon}>
+              <Ionicons
+                name="arrow-forward"
+                size={18}
+                color={colors.primary}
+              />
+            </View>
+          </>
+        )}
+      </TouchableOpacity>
+
+      {/* Signup link — শুধু Manager/Owner দের জন্য */}
+
+      <TouchableOpacity
+        style={styles.signupLink}
+        onPress={() => navigation.navigate('Signup')}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.signupLinkText}>
+          Registering a new building? <Text style={styles.signupLinkBold}>Sign up as Manager</Text>
+        </Text>
+      </TouchableOpacity>
+
+      {/* Security */}
+
+      <View style={styles.security}>
+        <Ionicons
+          name="shield-checkmark-outline"
+          size={15}
+          color={colors.primary}
+        />
+
+        <Text style={styles.securityText}>
+          Secure and private community access
+        </Text>
+      </View>
+
+    </KeyboardScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-
   container: {
-    flex: 1,
-    justifyContent: 'center',
     paddingHorizontal: 24,
+    paddingTop: 100,
   },
 
   /* ================= BRAND ================= */
