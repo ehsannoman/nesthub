@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-nati
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
 import { ManagerComplaint, ComplaintStatus } from '../../types';
-import { getMyComplaints } from '../../api/complaintServiceReal';
+import { getMyComplaints } from '../../api/complaintService';
 
 const filters: (ComplaintStatus | 'All')[] = ['All', 'Open', 'Assigned', 'In Progress', 'Resolved', 'Closed'];
 const priorityColor: Record<string, string> = { Low: colors.success, Medium: colors.warning, High: colors.danger };

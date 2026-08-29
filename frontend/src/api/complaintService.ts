@@ -1,51 +1,25 @@
-import { Complaint, ComplaintCategory, ComplaintPriority } from '../types';
+import { apiRequest } from './apiClient';
 
-// ==========================================================================
-// TODO (backend integration): এই ফাইলের ভেতরের ফাংশনগুলোর body বদলে
-// আসল Express API endpoint এ fetch/axios call বসিয়ে দিলেই কাজ হয়ে যাবে।
-// এখন সব local/mock ভাবে কাজ করছে যাতে UI test করা যায়।
-// ==========================================================================
-
-interface SubmitComplaintPayload {
-  category: ComplaintCategory;
+export async function submitComplaint(payload: {
+  category: string;
   description: string;
-  photoUri: string | null;
-  flat: string;
+  photoUrl?: string;
+}) {
+  return apiRequest('/complaints', { method: 'POST', body: payload });
 }
 
-// TODO (AI integration): backend এ POST /complaints হিট করার সময়
-// AI যদি category/priority suggest করে, response থেকে সেটা নিয়ে আসবে।
-// আপাতত simple rule দিয়ে priority ঠিক করছি।
-function suggestPriority(category: ComplaintCategory, description: string): ComplaintPriority {
-  const urgentKeywords = ['leak', 'fire', 'spark', 'stuck', 'broken', 'no water', 'no power'];
-  const text = description.toLowerCase();
-  if (category === 'Elevator' || category === 'Security') return 'High';
-  if (urgentKeywords.some((k) => text.includes(k))) return 'High';
-  if (category === 'Electrical' || category === 'Plumbing') return 'Medium';
-  return 'Low';
+export async function getMyComplaints() {
+  return apiRequest('/complaints');
 }
 
-export async function submitComplaint(payload: SubmitComplaintPayload): Promise<Complaint> {
-  // TODO (backend integration): replace করো এইভাবে —
-  // const res = await fetch('https://your-api.com/api/complaints', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-  //   body: JSON.stringify(payload),
-  // });
-  // return res.json();
+export async function getComplaintById(id: string) {
+  return apiRequest(`/complaints/${id}`);
+}
 
-  await new Promise((resolve) => setTimeout(resolve, 800)); // network delay simulate করছি
+export async function updateComplaintStatus(id: string, status: string) {
+  return apiRequest(`/complaints/${id}`, { method: 'PATCH', body: { status } });
+}
 
-  const complaint: Complaint = {
-    id: `C-${Math.floor(Math.random() * 900 + 100)}`,
-    category: payload.category,
-    description: payload.description,
-    photoUri: payload.photoUri,
-    status: 'Open',
-    priority: suggestPriority(payload.category, payload.description),
-    flat: payload.flat,
-    createdAt: Date.now(),
-  };
-
-  return complaint;
+export async function assignComplaint(id: string, assignedTo: string) {
+  return apiRequest(`/complaints/${id}`, { method: 'PATCH', body: { assignedTo } });
 }

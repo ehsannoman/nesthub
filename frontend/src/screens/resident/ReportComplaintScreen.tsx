@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { colors, spacing, radius } from '../../constants/theme';
 import { ComplaintCategory } from '../../types';
-import { submitComplaint } from '../../api/complaintServiceReal';
+import { submitComplaint } from '../../api/complaintService';
 
 const categories: { label: ComplaintCategory; icon: keyof typeof Ionicons.glyphMap }[] = [
   { label: 'Electrical', icon: 'flash-outline' },

@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
 import { ManagerComplaint, ComplaintStatus } from '../../types';
-import { getComplaintById, updateComplaintStatus as updateStatusReal, assignComplaint as assignComplaintReal } from '../../api/complaintServiceReal';
+import { getComplaintById, updateComplaintStatus as updateStatusReal, assignComplaint as assignComplaintReal } from '../../api/complaintService';
 
 const statusOptions: ComplaintStatus[] = ['Open', 'Assigned', 'In Progress', 'Resolved', 'Closed'];
 
