@@ -84,7 +84,7 @@ async function updateUserStatus(req, res) {
     const user = await User.findOneAndUpdate(
       { _id: req.params.id, buildingId: req.user.buildingId },
       { status },
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (!user) {
       return res.status(404).json({ message: 'User not found' });

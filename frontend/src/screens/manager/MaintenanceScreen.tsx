@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
-import { getAllComplaints } from '../../api/managerService';
 import { ManagerComplaint, ComplaintStatus } from '../../types';
+import { getMyComplaints } from '../../api/complaintServiceReal';
 
 const filters: (ComplaintStatus | 'All')[] = ['All', 'Open', 'Assigned', 'In Progress', 'Resolved', 'Closed'];
 const priorityColor: Record<string, string> = { Low: colors.success, Medium: colors.warning, High: colors.danger };
@@ -13,7 +13,16 @@ export default function MaintenanceScreen() {
   const [complaints, setComplaints] = useState<ManagerComplaint[]>([]);
   const [filter, setFilter] = useState<ComplaintStatus | 'All'>('All');
 
-  useEffect(() => { getAllComplaints().then(setComplaints); }, []);
+  useEffect(() => {
+    getMyComplaints().then((data) => {
+      const normalized = data.map((c: any) => ({
+        ...c,
+        id: c._id,
+        residentName: c.residentId?.name || 'Unknown',
+      }));
+      setComplaints(normalized);
+    });
+  }, []);
 
   const filtered = filter === 'All' ? complaints : complaints.filter((c) => c.status === filter);
 

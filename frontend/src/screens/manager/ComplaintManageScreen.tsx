@@ -3,8 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Activi
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
-import { getAllComplaints, updateComplaintStatus, assignComplaint } from '../../api/managerService';
 import { ManagerComplaint, ComplaintStatus } from '../../types';
+import { getComplaintById, updateComplaintStatus as updateStatusReal, assignComplaint as assignComplaintReal } from '../../api/complaintServiceReal';
 
 const statusOptions: ComplaintStatus[] = ['Open', 'Assigned', 'In Progress', 'Resolved', 'Closed'];
 
@@ -18,10 +18,10 @@ export default function ComplaintManageScreen() {
   const [updating, setUpdating] = useState(false);
 
   const load = () => {
-    getAllComplaints().then((list) => {
-      const found = list.find((c) => c.id === complaintId) || null;
-      setComplaint(found);
-      setStaffName(found?.assignedTo || '');
+    getComplaintById(complaintId).then((data: any) => {
+      const normalized = { ...data, id: data._id, residentName: data.residentId?.name || 'Unknown' };
+      setComplaint(normalized);
+      setStaffName(normalized.assignedTo || '');
     });
   };
 
@@ -30,7 +30,7 @@ export default function ComplaintManageScreen() {
   const handleStatusChange = async (status: ComplaintStatus) => {
     if (!complaint || updating) return;
     setUpdating(true);
-    await updateComplaintStatus(complaint.id, status);
+    await updateStatusReal(complaint.id, status);
     setUpdating(false);
     load();
   };
@@ -38,7 +38,7 @@ export default function ComplaintManageScreen() {
   const handleAssign = async () => {
     if (!complaint || !staffName.trim() || updating) return;
     setUpdating(true);
-    await assignComplaint(complaint.id, staffName);
+    await assignComplaintReal(complaint.id, staffName);
     setUpdating(false);
     load();
   };

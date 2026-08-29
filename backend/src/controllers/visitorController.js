@@ -81,7 +81,7 @@ async function checkInVisitor(req, res) {
     const visitor = await Visitor.findOneAndUpdate(
       { _id: req.params.id, buildingId: req.user.buildingId },
       { status: 'entered', entryTime: new Date(), checkedInBy: req.user._id },
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (!visitor) return res.status(404).json({ message: 'Visitor not found' });
 
@@ -100,7 +100,7 @@ async function checkOutVisitor(req, res) {
     const visitor = await Visitor.findOneAndUpdate(
       { _id: req.params.id, buildingId: req.user.buildingId },
       { status: 'exited', exitTime: new Date() },
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (!visitor) return res.status(404).json({ message: 'Visitor not found' });
     res.json({ id: visitor._id, status: visitor.status });

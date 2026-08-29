@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
-import { Complaint, ComplaintStatus } from '../../types';
+import { ComplaintStatus } from '../../types';
 
 const timelineSteps: ComplaintStatus[] = ['Open', 'Assigned', 'In Progress', 'Resolved', 'Closed'];
 
@@ -16,7 +16,11 @@ const priorityColor: Record<string, string> = {
 export default function ComplaintDetailScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
-  const complaint: Complaint = route.params.complaint;
+  const rawComplaint = route.params.complaint;
+  const complaint = {
+      ...rawComplaint,
+      id: rawComplaint.id || rawComplaint._id,
+  };
 
   const currentStepIndex = timelineSteps.indexOf(complaint.status);
 
@@ -55,8 +59,8 @@ export default function ComplaintDetailScreen() {
           <Text style={styles.summaryValue}>{complaint.flat}</Text>
         </View>
         <Text style={styles.descriptionText}>{complaint.description}</Text>
-        {complaint.photoUri ? (
-          <Image source={{ uri: complaint.photoUri }} style={styles.photo} />
+        {complaint.photoUrl ? (
+          <Image source={{ uri: complaint.photoUrl }} style={styles.photo} />
         ) : null}
       </View>
 

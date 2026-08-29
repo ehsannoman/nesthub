@@ -74,7 +74,7 @@ async function updateComplaint(req, res) {
     const complaint = await Complaint.findOneAndUpdate(
       { _id: req.params.id, buildingId: req.user.buildingId },
       update,
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (!complaint) return res.status(404).json({ message: 'Complaint not found' });
 

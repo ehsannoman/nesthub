@@ -19,3 +19,7 @@ export async function getComplaintById(id: string) {
 export async function updateComplaintStatus(id: string, status: string) {
   return apiRequest(`/complaints/${id}`, { method: 'PATCH', body: { status } });
 }
+
+export async function assignComplaint(id: string, assignedTo: string) {
+  return apiRequest(`/complaints/${id}`, { method: 'PATCH', body: { assignedTo } });
+}

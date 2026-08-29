@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image, ActivityIndicator,Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { colors, spacing, radius } from '../../constants/theme';
 import { ComplaintCategory } from '../../types';
-import { submitComplaint } from '../../api/complaintService';
+import { submitComplaint } from '../../api/complaintServiceReal';
 
 const categories: { label: ComplaintCategory; icon: keyof typeof Ionicons.glyphMap }[] = [
   { label: 'Electrical', icon: 'flash-outline' },
@@ -46,13 +46,11 @@ export default function ReportComplaintScreen() {
       const complaint = await submitComplaint({
         category: category!,
         description,
-        photoUri,
-        flat: 'B-803',
+        // photoUrl পরে যোগ হবে যখন Cloudinary/image upload বসানো হবে
       });
       navigation.replace('ComplaintDetail', { complaint });
-    } catch (err) {
-      // TODO (backend integration): এখানে proper error handling / toast বসাবে
-      console.log('Failed to submit complaint', err);
+    } catch (err: any) {
+      Alert.alert('Failed', err.message || 'Could not submit complaint');
     } finally {
       setSubmitting(false);
     }
