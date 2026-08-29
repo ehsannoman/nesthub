@@ -117,4 +117,40 @@ async function login(req, res) {
   }
 }
 
-module.exports = { registerManager, login };
+// POST /api/auth/change-password — logged-in যেকোনো user নিজের password বদলাতে পারবে
+async function changePassword(req, res) {
+  try {
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters' });
+    }
+
+    const user = await User.findById(req.user._id);
+    user.password = newPassword; // pre-save hook automatic hash করবে
+    user.mustChangePassword = false;
+    user.tokenVersion += 1; // পুরনো সব token invalid করে দেয়, security এর জন্য ভালো practice
+    await user.save();
+
+    const newToken = generateToken(user);
+
+    res.json({
+      message: 'Password changed successfully',
+      token: newToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        buildingId: user.buildingId,
+        flat: user.flat,
+        mustChangePassword: false,
+      },
+    });
+  } catch (err) {
+    console.error('changePassword error:', err);
+    res.status(500).json({ message: 'Failed to change password' });
+  }
+}
+
+module.exports = { registerManager, login, changePassword };

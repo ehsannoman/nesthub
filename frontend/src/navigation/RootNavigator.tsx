@@ -45,6 +45,7 @@ import ProfileScreen from '../screens/resident/ProfileScreen';
 import SignupScreen from '../screens/auth/SignupScreen';
 import { useAuth } from '../context/AuthContext';
 import { colors } from '../constants/theme';
+import ChangePasswordScreen from '../screens/auth/ChangePasswordScreen';
 
 type TabIconConfig = { active: keyof typeof Ionicons.glyphMap; inactive: keyof typeof Ionicons.glyphMap };
 type TabIconMap = { [key: string]: TabIconConfig };
@@ -232,7 +233,10 @@ export default function RootNavigator() {
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Signup" component={SignupScreen} />
           </>
-        ) : user.role === 'manager' ? (
+        ): user.mustChangePassword ? (
+          <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+        ) 
+         : user.role === 'manager' ? (
           <Stack.Screen name="ManagerTabs" component={ManagerTabs} />
         ) : user.role === 'security' ? (
           <Stack.Screen name="SecurityTabs" component={SecurityTabs} />

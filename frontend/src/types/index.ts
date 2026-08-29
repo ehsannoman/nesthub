@@ -5,6 +5,9 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
+  buildingId?: string;
+  flat?: string;
+  mustChangePassword?: boolean;
 }
 export type ComplaintCategory =
   | 'Electrical' | 'Plumbing' | 'Elevator' | 'Cleaning' | 'Security' | 'Internet' | 'Others';

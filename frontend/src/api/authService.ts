@@ -31,3 +31,12 @@ export async function login(email: string, password: string) {
   setAuthToken(data.token);
   return data;
 }
+
+export async function changePassword(newPassword: string) {
+  const data = await apiRequest('/auth/change-password', {
+    method: 'POST',
+    body: { newPassword },
+  });
+  setAuthToken(data.token);
+  return data;
+}

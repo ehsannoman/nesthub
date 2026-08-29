@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Activi
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
-import { getUsers, createUser } from '../../api/managerService';
+import { getUsers, createUser } from '../../api/userService';
 import { ManagedUser, AccountRole } from '../../types';
 
 const roleFilters: { label: string; value: AccountRole | 'all' }[] = [

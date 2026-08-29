@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const { generateTempPassword } = require('../utils/generatePassword');
+const { sendWelcomeEmail } = require('../utils/sendEmail');
 
 // GET /api/users — শুধু manager দেখতে পারবে, নিজের building এর সব ইউজার
 async function getUsers(req, res) {
@@ -53,10 +54,15 @@ async function createUser(req, res) {
       joiningDate,
     });
 
-    // TODO (email integration): এখানে Nodemailer দিয়ে tempPassword ইউজারের email এ পাঠানো হবে।
-    // আপাতত console এ log করছি যাতে test করা যায়।
-    console.log(`📧 [MOCK EMAIL] To: ${email} — Your NestHub login: email=${email}, temporary password=${tempPassword}`);
-
+    try {
+          const Building = require('../models/Building');
+          const building = await Building.findById(req.user.buildingId);
+          await sendWelcomeEmail(email, name, email, tempPassword, building?.name || 'your community');
+          console.log(`📧 Welcome email sent to ${email}`);
+        } catch (emailErr) {
+          console.error('Failed to send welcome email:', emailErr.message);
+          // email fail হলেও user creation fail করব না, শুধু log করব
+        }
     res.status(201).json({
       id: newUser._id,
       name: newUser.name,
