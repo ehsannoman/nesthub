@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
-import { checkInVisitor, ParsedVisitorQR } from '../../api/securityService';
+import { ParsedVisitorQR } from '../../api/securityService';
+import { checkInVisitor } from '../../api/visitorService';
 
 export default function VisitorEntryResultScreen() {
   const navigation = useNavigation<any>();
@@ -15,9 +16,13 @@ export default function VisitorEntryResultScreen() {
   const handleApprove = async () => {
     if (!visitor) return;
     setApproving(true);
-    await checkInVisitor(visitor.name, visitor.flat);
-    setApproving(false);
-    setApproved(true);
+    try {
+      await checkInVisitor(visitor.id);
+      setApproving(false);
+      setApproved(true);
+    } catch (err) {
+      setApproving(false);
+    }
   };
 
   if (!valid || !visitor) {
@@ -64,7 +69,7 @@ export default function VisitorEntryResultScreen() {
         <View style={styles.row}><Text style={styles.label}>Visitor</Text><Text style={styles.value}>{visitor.name}</Text></View>
         <View style={styles.row}><Text style={styles.label}>Phone</Text><Text style={styles.value}>{visitor.phone}</Text></View>
         <View style={styles.row}><Text style={styles.label}>Flat</Text><Text style={styles.value}>{visitor.flat}</Text></View>
-        <View style={styles.row}><Text style={styles.label}>Visit Time</Text><Text style={styles.value}>{visitor.date} · {visitor.time}</Text></View>
+        <View style={styles.row}><Text style={styles.label}>Visit Time</Text><Text style={styles.value}>{visitor.visitDate} · {visitor.visitTime}</Text></View>
         {visitor.vehicle ? (
           <View style={styles.row}><Text style={styles.label}>Vehicle</Text><Text style={styles.value}>{visitor.vehicle}</Text></View>
         ) : null}

@@ -90,14 +90,13 @@ export async function checkOutInsideVisitor(id: string): Promise<void> {
 }
 
 export interface ParsedVisitorQR {
-  type: 'nesthub-visitor';
+  id: string;
   name: string;
   phone: string;
-  date: string;
-  time: string;
-  vehicle: string | null;
   flat: string;
-  createdAt: number;
+  visitDate: string;
+  visitTime: string;
+  vehicle?: string;
 }
 
 export function parseVisitorQR(raw: string): ParsedVisitorQR | null {

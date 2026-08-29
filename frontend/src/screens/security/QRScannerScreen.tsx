@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
 import { parseVisitorQR } from '../../api/securityService';
+import { scanVisitorQR } from '../../api/visitorService';
 
 export default function QRScannerScreen() {
   const navigation = useNavigation<any>();
@@ -30,14 +31,14 @@ export default function QRScannerScreen() {
     );
   }
 
-  const handleScan = ({ data }: { data: string }) => {
+  const handleScan = async ({ data }: { data: string }) => {
     if (scanned) return;
     setScanned(true);
 
-    const parsed = parseVisitorQR(data);
-    if (parsed) {
-      navigation.replace('VisitorEntryResult', { visitor: parsed, valid: true });
-    } else {
+    try {
+      const result = await scanVisitorQR(data);
+      navigation.replace('VisitorEntryResult', { visitor: result.visitor, valid: true });
+    } catch (err) {
       navigation.replace('VisitorEntryResult', { visitor: null, valid: false });
     }
   };

@@ -28,3 +28,9 @@ app.use('/api/users', userRoutes);
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
+const visitorRoutes = require('./src/routes/visitorRoutes');
+app.use('/api/visitors', visitorRoutes);
+
+const complaintRoutes = require('./src/routes/complaintRoutes');
+app.use('/api/complaints', complaintRoutes);

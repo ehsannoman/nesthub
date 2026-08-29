@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Share } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Share,Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import QRCode from 'react-native-qrcode-svg';
 import { colors, spacing, radius } from '../../constants/theme';
+import { inviteVisitor } from '../../api/visitorService';
+import { useAuth } from '../../context/AuthContext';
 
 export default function InviteVisitorScreen() {
+  const { user } = useAuth();
   const navigation = useNavigation();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -16,20 +19,20 @@ export default function InviteVisitorScreen() {
 
   const canGenerate = name.trim() && phone.trim() && date.trim() && time.trim();
 
-  const handleGenerate = () => {
-    if (!canGenerate) return;
-    const payload = JSON.stringify({
-      type: 'nesthub-visitor',
-      name,
-      phone,
-      date,
-      time,
-      vehicle: vehicle || null,
-      flat: 'B-803',
-      createdAt: Date.now(),
-    });
-    setQrValue(payload);
-  };
+  const [generating, setGenerating] = useState(false);
+
+  const handleGenerate = async () => {
+      if (!canGenerate || generating) return;
+      setGenerating(true);
+      try {
+        const data = await inviteVisitor({ name, phone, visitDate: date, visitTime: time, vehicle: vehicle || undefined });
+        setQrValue(data.qrToken); // এখন QR code এ শুধু token থাকবে, পুরো JSON না
+      } catch (err: any) {
+        Alert.alert('Failed', err.message || 'Could not create invite');
+      } finally {
+        setGenerating(false);
+      }
+    };
 
   const handleShare = () => {
     Share.share({
@@ -104,17 +107,17 @@ export default function InviteVisitorScreen() {
           <TouchableOpacity
             style={[styles.generateButton, !canGenerate && styles.generateButtonDisabled]}
             onPress={handleGenerate}
-            disabled={!canGenerate}
+            disabled={!canGenerate || generating}
           >
             <Ionicons name="qr-code-outline" size={18} color="#fff" />
-            <Text style={styles.generateButtonText}>Generate QR Code</Text>
+            <Text style={styles.generateButtonText}>{generating ? 'Generating...' : 'Generate QR Code'}</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.qrSection}>
           <View style={styles.qrCard}>
             <Text style={styles.qrTitle}>Visitor Pass</Text>
-            <Text style={styles.qrSubtitle}>Green Valley Residency · Flat B-803</Text>
+            <Text style={styles.qrSubtitle}>Flat {user?.flat || 'N/A'}</Text>
 
             <View style={styles.qrWrap}>
               <QRCode value={qrValue} size={200} color={colors.text} backgroundColor="#fff" />
