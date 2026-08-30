@@ -10,6 +10,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { colors, spacing, radius, typography } from '../../constants/theme';
 import { useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import { getMyVisitors } from '../../api/visitorService';
+import { getMyComplaints } from '../../api/complaintService';
 
 const quickActions = [
   {
@@ -27,57 +30,6 @@ const quickActions = [
   {
     label: 'View\nBills',
     icon: 'document-text-outline' as const,
-  },
-];
-
-const overviewItems = [
-  {
-    label: 'Visitors',
-    sub: 'Today',
-    value: 2,
-    icon: 'people-outline' as const,
-    bg: '#E6F4F4',
-    tint: colors.primary,
-  },
-  {
-    label: 'My Complaints',
-    sub: 'Open',
-    value: 1,
-    icon: 'build-outline' as const,
-    bg: '#FEF3E2',
-    tint: colors.warning,
-  },
-  {
-    label: 'Facility Bookings',
-    sub: 'Upcoming',
-    value: 1,
-    icon: 'calendar-outline' as const,
-    bg: '#EAF2FF',
-    tint: colors.info,
-  },
-  {
-    label: 'My Packages',
-    sub: 'New',
-    value: 1,
-    icon: 'cube-outline' as const,
-    bg: '#F3ECFF',
-    tint: colors.primary,
-  },
-  {
-    label: 'Notices',
-    sub: 'Unread',
-    value: 3,
-    icon: 'megaphone-outline' as const,
-    bg: '#EAF7EE',
-    tint: colors.success,
-  },
-  {
-    label: 'My Vehicles',
-    sub: 'Registered',
-    value: 1,
-    icon: 'car-outline' as const,
-    bg: '#E6F4F4',
-    tint: colors.primary,
   },
 ];
 
@@ -99,6 +51,28 @@ const recentNotices = [
 export default function ResidentDashboard() {
   const { user } = useAuth();
   const navigation = useNavigation<any>();
+  const [visitorsToday, setVisitorsToday] = useState(0);
+  const [openComplaints, setOpenComplaints] = useState(0);
+
+  useEffect(() => {
+    getMyVisitors().then((visitors: any[]) => {
+      const today = new Date().toLocaleDateString('en-GB').replace(/\//g, '/');
+      setVisitorsToday(visitors.filter((v) => v.visitDate === today).length);
+    }).catch(() => {});
+
+    getMyComplaints().then((complaints: any[]) => {
+      setOpenComplaints(complaints.filter((c: any) => c.status !== 'Resolved' && c.status !== 'Closed').length);
+    }).catch(() => {});
+  }, []);
+
+    const overviewItems = [
+    { label: 'Visitors', sub: 'Today', value: visitorsToday, icon: 'people-outline' as const, bg: '#E6F4F4', tint: colors.primary },
+    { label: 'My Complaints', sub: 'Open', value: openComplaints, icon: 'build-outline' as const, bg: '#FEF3E2', tint: colors.warning },
+    { label: 'Facility Bookings', sub: 'Upcoming', value: 1, icon: 'calendar-outline' as const, bg: '#EAF2FF', tint: colors.info },
+    { label: 'My Packages', sub: 'New', value: 1, icon: 'cube-outline' as const, bg: '#F3ECFF', tint: colors.primary },
+    { label: 'Notices', sub: 'Unread', value: 3, icon: 'megaphone-outline' as const, bg: '#EAF7EE', tint: colors.success },
+    { label: 'My Vehicles', sub: 'Registered', value: 1, icon: 'car-outline' as const, bg: '#E6F4F4', tint: colors.primary },
+  ];
 
   return (
     <View style={styles.screen}>

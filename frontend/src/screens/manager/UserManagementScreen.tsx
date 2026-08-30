@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
 import { getUsers, createUser } from '../../api/userService';
 import { ManagedUser, AccountRole } from '../../types';
+import DateField from '../../components/DateField';
 
 const roleFilters: { label: string; value: AccountRole | 'all' }[] = [
   { label: 'All', value: 'all' },
@@ -221,8 +222,7 @@ export default function UserManagementScreen() {
                   </View>
 
                   <Text style={styles.label}>Move-in Date</Text>
-                  <TextInput style={styles.input} placeholder="DD/MM/YYYY" placeholderTextColor={colors.textMuted} value={moveInDate} onChangeText={setMoveInDate} />
-
+                  <DateField value={moveInDate} onChange={setMoveInDate} />
                   <Text style={styles.label}>Emergency Contact Name</Text>
                   <TextInput style={styles.input} placeholder="Contact person's name" placeholderTextColor={colors.textMuted} value={emergencyName} onChangeText={setEmergencyName} />
 
@@ -245,7 +245,7 @@ export default function UserManagementScreen() {
                   <TextInput style={styles.input} placeholder="e.g. EMP-0142" placeholderTextColor={colors.textMuted} value={employeeId} onChangeText={setEmployeeId} />
 
                   <Text style={styles.label}>Joining Date</Text>
-                  <TextInput style={styles.input} placeholder="DD/MM/YYYY" placeholderTextColor={colors.textMuted} value={joiningDate} onChangeText={setJoiningDate} />
+                  <DateField value={joiningDate} onChange={setJoiningDate} />
                 </>
               )}
 

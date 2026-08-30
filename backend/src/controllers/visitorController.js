@@ -175,7 +175,17 @@ async function registerWalkIn(req, res) {
   }
 }
 
+// GET /api/visitors/my — Resident নিজের invite করা visitor গুলো দেখবে
+async function getMyVisitors(req, res) {
+  try {
+    const visitors = await Visitor.find({ invitedBy: req.user._id }).sort({ createdAt: -1 });
+    res.json(visitors);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch your visitors' });
+  }
+}
+
 module.exports = {
   inviteVisitor, scanVisitor, checkInVisitor, checkOutVisitor,
-  getTodayVisitors, getExpectedVisitors, getInsideVisitors, registerWalkIn,
+  getTodayVisitors, getExpectedVisitors, getInsideVisitors, registerWalkIn, getMyVisitors,
 };

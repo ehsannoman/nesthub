@@ -6,6 +6,7 @@ import QRCode from 'react-native-qrcode-svg';
 import { colors, spacing, radius } from '../../constants/theme';
 import { inviteVisitor } from '../../api/visitorService';
 import { useAuth } from '../../context/AuthContext';
+import DateField from '../../components/DateField';
 
 export default function InviteVisitorScreen() {
   const { user } = useAuth();
@@ -75,13 +76,7 @@ export default function InviteVisitorScreen() {
           <View style={styles.row}>
             <View style={styles.half}>
               <Text style={styles.label}>Visit Date</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="DD/MM/YYYY"
-                placeholderTextColor={colors.textMuted}
-                value={date}
-                onChangeText={setDate}
-              />
+              <DateField value={date} onChange={setDate} minimumDate={new Date()} />
             </View>
             <View style={styles.half}>
               <Text style={styles.label}>Visit Time</Text>

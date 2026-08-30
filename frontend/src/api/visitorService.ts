@@ -42,3 +42,7 @@ export async function registerWalkInVisitor(payload: {
 }) {
   return apiRequest('/visitors/walk-in', { method: 'POST', body: payload });
 }
+
+export async function getMyVisitors() {
+  return apiRequest('/visitors/my');
+}

@@ -3,7 +3,7 @@ const router = express.Router();
 const { protect, requireRole } = require('../middleware/authMiddleware');
 const {
   inviteVisitor, scanVisitor, checkInVisitor, checkOutVisitor,
-  getTodayVisitors, getExpectedVisitors, getInsideVisitors, registerWalkIn,
+  getTodayVisitors, getExpectedVisitors, getInsideVisitors, registerWalkIn, getMyVisitors,
 } = require('../controllers/visitorController');
 
 router.use(protect); // সব route এ login লাগবে
@@ -17,5 +17,6 @@ router.post('/walk-in', requireRole('security'), registerWalkIn);
 router.get('/today', requireRole('security', 'manager'), getTodayVisitors);
 router.get('/expected', requireRole('security', 'manager'), getExpectedVisitors);
 router.get('/inside', requireRole('security', 'manager'), getInsideVisitors);
+router.get('/my', requireRole('resident'), getMyVisitors);
 
 module.exports = router;
