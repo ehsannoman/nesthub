@@ -7,6 +7,9 @@ import { colors, spacing, radius } from '../../constants/theme';
 import { inviteVisitor } from '../../api/visitorService';
 import { useAuth } from '../../context/AuthContext';
 import DateField from '../../components/DateField';
+import { useRef } from 'react';
+import ViewShot from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
 
 export default function InviteVisitorScreen() {
   const { user } = useAuth();
@@ -17,7 +20,7 @@ export default function InviteVisitorScreen() {
   const [time, setTime] = useState('');
   const [vehicle, setVehicle] = useState('');
   const [qrValue, setQrValue] = useState<string | null>(null);
-
+  const qrRef = useRef<ViewShot>(null);
   const canGenerate = name.trim() && phone.trim() && date.trim() && time.trim();
 
   const [generating, setGenerating] = useState(false);
@@ -35,10 +38,22 @@ export default function InviteVisitorScreen() {
       }
     };
 
-  const handleShare = () => {
-    Share.share({
-      message: `You're invited to Green Valley Residency!\nVisitor: ${name}\nDate: ${date} at ${time}\nShow this code at the gate.`,
-    });
+  const handleShare = async () => {
+      try {
+        const uri = await qrRef.current?.capture?.();
+        if (uri && (await Sharing.isAvailableAsync())) {
+          await Sharing.shareAsync(uri, {
+            dialogTitle: 'Share Visitor Pass',
+          });
+        } else {
+          // fallback — যদি image capture fail করে, অন্তত text টা যাক
+          Share.share({
+            message: `You're invited to Green Valley Residency!\nVisitor: ${name}\nDate: ${date} at ${time}\nShow this code at the gate.`,
+          });
+        }
+      } catch (err) {
+        console.log('Share failed', err);
+      }
   };
 
   return (
@@ -110,31 +125,33 @@ export default function InviteVisitorScreen() {
         </View>
       ) : (
         <View style={styles.qrSection}>
-          <View style={styles.qrCard}>
-            <Text style={styles.qrTitle}>Visitor Pass</Text>
-            <Text style={styles.qrSubtitle}>Flat {user?.flat || 'N/A'}</Text>
+          <ViewShot ref={qrRef} options={{ format: 'png', quality: 1 }}>
+            <View style={styles.qrCard}>
+              <Text style={styles.qrTitle}>Visitor Pass</Text>
+              <Text style={styles.qrSubtitle}>Flat {user?.flat || 'N/A'}</Text>
 
-            <View style={styles.qrWrap}>
-              <QRCode value={qrValue} size={200} color={colors.text} backgroundColor="#fff" />
-            </View>
+              <View style={styles.qrWrap}>
+                <QRCode value={qrValue} size={200} color={colors.text} backgroundColor="#fff" />
+              </View>
 
-            <View style={styles.qrDetails}>
-              <View style={styles.qrDetailRow}>
-                <Text style={styles.qrDetailLabel}>Visitor</Text>
-                <Text style={styles.qrDetailValue}>{name}</Text>
-              </View>
-              <View style={styles.qrDetailRow}>
-                <Text style={styles.qrDetailLabel}>Date & Time</Text>
-                <Text style={styles.qrDetailValue}>{date} · {time}</Text>
-              </View>
-              {vehicle ? (
+              <View style={styles.qrDetails}>
                 <View style={styles.qrDetailRow}>
-                  <Text style={styles.qrDetailLabel}>Vehicle</Text>
-                  <Text style={styles.qrDetailValue}>{vehicle}</Text>
+                  <Text style={styles.qrDetailLabel}>Visitor</Text>
+                  <Text style={styles.qrDetailValue}>{name}</Text>
                 </View>
-              ) : null}
+                <View style={styles.qrDetailRow}>
+                  <Text style={styles.qrDetailLabel}>Date & Time</Text>
+                  <Text style={styles.qrDetailValue}>{date} · {time}</Text>
+                </View>
+                {vehicle ? (
+                  <View style={styles.qrDetailRow}>
+                    <Text style={styles.qrDetailLabel}>Vehicle</Text>
+                    <Text style={styles.qrDetailValue}>{vehicle}</Text>
+                  </View>
+                ) : null}
+              </View>
             </View>
-          </View>
+          </ViewShot>
 
           <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
             <Ionicons name="share-social-outline" size={18} color={colors.primary} />

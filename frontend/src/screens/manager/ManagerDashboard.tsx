@@ -11,6 +11,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { colors } from '../../constants/theme';
 import { useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import { getUsers } from '../../api/userService';
+import { getTodayVisitors } from '../../api/visitorService';
 
 /* =========================================================
    DATA
@@ -25,13 +28,6 @@ const quickActions = [
   { label: 'Maintenance Request', icon: 'construct-outline' as const },
   { label: 'Facility Booking', icon: 'calendar-outline' as const },
   { label: 'Generate Report', icon: 'bar-chart-outline' as const },
-];
-
-const overviewStats = [
-  { label: 'Total Residents', value: '128', change: '↑ 12%' },
-  { label: 'Security Staff', value: '18', change: '↑ 5%' },
-  { label: 'Maintenance Staff', value: '12', change: '↑ 8%' },
-  { label: 'Active Visitors', value: '24', change: '↑ 15%' },
 ];
 
 const recentActivities = [
@@ -54,6 +50,29 @@ const reminders = [
 export default function ManagerDashboard() {
   const { user } = useAuth();
   const navigation = useNavigation<any>();
+  const [totalResidents, setTotalResidents] = useState(0);
+  const [securityStaff, setSecurityStaff] = useState(0);
+  const [maintenanceStaff, setMaintenanceStaff] = useState(0);
+  const [activeVisitors, setActiveVisitors] = useState(0);
+
+  useEffect(() => {
+    getUsers().then((users: any[]) => {
+      setTotalResidents(users.filter((u) => u.role === 'resident').length);
+      setSecurityStaff(users.filter((u) => u.role === 'security').length);
+      setMaintenanceStaff(users.filter((u) => u.role === 'maintenance').length);
+    }).catch(() => {});
+
+    getTodayVisitors().then((visitors: any[]) => {
+      setActiveVisitors(visitors.filter((v) => v.status === 'entered').length);
+    }).catch(() => {});
+  }, []);
+
+  const overviewStats = [
+    { label: 'Total Residents', value: String(totalResidents), change: '' },
+    { label: 'Security Staff', value: String(securityStaff), change: '' },
+    { label: 'Maintenance Staff', value: String(maintenanceStaff), change: '' },
+    { label: 'Active Visitors', value: String(activeVisitors), change: '' },
+  ];
 
   return (
     <View style={styles.screen}>

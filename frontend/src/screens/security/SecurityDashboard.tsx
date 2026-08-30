@@ -9,6 +9,7 @@ import {
   approveExpectedVisitor, rejectExpectedVisitor, checkOutInsideVisitor,
 } from '../../api/securityService';
 import { SecurityOverview, ExpectedVisitor, InsideVisitor, SecurityActivity } from '../../types';
+import { getTodayVisitors as getRealTodayVisitors, getInsideVisitors as getRealInsideVisitors } from '../../api/visitorService';
 
 const quickActions = [
   { label: 'Register\nVisitor', icon: 'person-add-outline' as const, route: 'AddVisitor' },
@@ -39,15 +40,24 @@ export default function SecurityDashboard() {
   const [loading, setLoading] = useState(true);
 
   const loadAll = () => {
-    Promise.all([getSecurityOverview(), getExpectedVisitors(), getCurrentlyInside(), getRecentActivity()]).then(
-      ([o, e, i, a]) => {
-        setOverview(o);
-        setExpected(e);
-        setInside(i);
-        setActivity(a);
-        setLoading(false);
-      }
-    );
+    Promise.all([
+      getSecurityOverview(),
+      getExpectedVisitors(),
+      getCurrentlyInside(),
+      getRecentActivity(),
+      getRealTodayVisitors().catch(() => []),
+      getRealInsideVisitors().catch(() => []),
+    ]).then(([o, e, i, a, realToday, realInside]: any) => {
+      setOverview({
+        ...o,
+        visitorsToday: realToday.length,
+        currentlyInside: realInside.length,
+      });
+      setExpected(e);
+      setInside(i);
+      setActivity(a);
+      setLoading(false);
+    });
   };
 
   useEffect(() => {
