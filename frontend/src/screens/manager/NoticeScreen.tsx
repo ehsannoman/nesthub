@@ -3,8 +3,9 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
-import { getNotices } from '../../api/managerService';
+import { getNotices } from '../../api/noticeService';
 import { NoticeItem } from '../../types';
+
 
 function timeAgo(ts: number) {
   const hrs = Math.floor((Date.now() - ts) / 3600000);
@@ -17,7 +18,11 @@ export default function NoticeScreen() {
   const navigation = useNavigation<any>();
   const [notices, setNotices] = useState<NoticeItem[]>([]);
 
-  useEffect(() => { getNotices().then(setNotices); }, []);
+  useEffect(() => {
+    getNotices().then((data: any[]) => {
+      setNotices(data.map((n) => ({ ...n, id: n._id })));
+    });
+  }, []);
 
   return (
     <View style={styles.container}>

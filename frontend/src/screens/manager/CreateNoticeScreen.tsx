@@ -3,7 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Activi
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
-import { publishNotice, generateNoticeFromDraft } from '../../api/managerService';
+import { publishNotice } from '../../api/noticeService';
+import { generateNoticeFromDraft } from '../../api/managerService';
 
 export default function CreateNoticeScreen() {
   const navigation = useNavigation<any>();

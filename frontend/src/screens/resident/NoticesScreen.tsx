@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
-import { getNoticesForResident } from '../../api/residentService';
+import { getNotices } from '../../api/noticeService';
+
 
 function timeAgo(ts: number) {
   const hrs = Math.floor((Date.now() - ts) / 3600000);
@@ -18,7 +19,10 @@ export default function NoticesScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getNoticesForResident().then((data) => { setNotices(data); setLoading(false); });
+    getNotices().then((data: any[]) => {
+      setNotices(data.map((n) => ({ ...n, id: n._id, publishedAt: new Date(n.createdAt).getTime() })));
+      setLoading(false);
+    });
   }, []);
 
   return (
