@@ -285,6 +285,11 @@ export default function ResidentDashboard() {
               key={item.label}
               style={styles.overviewCard}
               activeOpacity={0.8}
+              onPress={() => {
+                if (item.label === 'My Packages') {
+                  navigation.navigate('Packages');
+                }
+              }}
             >
               {/* ICON + ARROW */}
 

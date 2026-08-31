@@ -3,16 +3,29 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
-import { getDeliveries } from '../../api/securityService';
+import { getPackages, markPackageCollected } from '../../api/packageService';
 import { DeliveryItem } from '../../types';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function DeliveriesScreen() {
   const navigation = useNavigation<any>();
   const [deliveries, setDeliveries] = useState<DeliveryItem[]>([]);
 
-  useEffect(() => {
-    getDeliveries().then(setDeliveries);
-  }, []);
+  const loadPackages = () => {
+    getPackages().then((data: any[]) => {
+      setDeliveries(data.map((p) => ({
+        id: p._id, flat: p.flat, courier: p.courier,
+        time: new Date(p.createdAt).toLocaleString(), status: p.status,
+      })));
+    });
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      loadPackages();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -34,18 +47,28 @@ export default function DeliveriesScreen() {
                 <Text style={styles.title}>{d.courier}</Text>
                 <Text style={styles.sub}>Flat {d.flat} · {d.time}</Text>
               </View>
-              <View style={[styles.statusBadge, d.status === 'collected' && styles.statusCollected]}>
-                <Text style={[styles.statusText, d.status === 'collected' && styles.statusCollectedText]}>
-                  {d.status === 'collected' ? 'Collected' : 'Received'}
-                </Text>
-              </View>
+              {d.status === 'collected' ? (
+                <View style={[styles.statusBadge, styles.statusCollected]}>
+                  <Text style={[styles.statusText, styles.statusCollectedText]}>Collected</Text>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  style={styles.statusBadge}
+                  onPress={async () => {
+                    await markPackageCollected(d.id);
+                    loadPackages();
+                  }}
+                >
+                  <Text style={styles.statusText}>Mark Collected</Text>
+                </TouchableOpacity>
+              )}
             </View>
-          ))}
-        </View>
-      </ScrollView>
-    </View>
-  );
-}
+                      ))}
+                    </View>
+                  </ScrollView>
+                </View>
+          );
+        }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },

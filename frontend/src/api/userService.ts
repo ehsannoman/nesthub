@@ -69,3 +69,7 @@ export async function createUser(payload: CreateUserPayload): Promise<ManagedUse
     flat: data.flat,
   };
 }
+
+export async function getBuildingFlats(): Promise<{ flat: string; residentName: string }[]> {
+  return apiRequest('/users/flats');
+}

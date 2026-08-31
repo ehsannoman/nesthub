@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image, ActivityIndicator,Alert,Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { colors, spacing, radius } from '../../constants/theme';
-import { registerPackage } from '../../api/securityService';
+import { registerPackage } from '../../api/packageService';
+import { getBuildingFlats } from '../../api/userService';
 
 export default function AddPackageScreen() {
   const navigation = useNavigation<any>();
@@ -25,10 +26,21 @@ export default function AddPackageScreen() {
   const handleSubmit = async () => {
     if (!canSubmit || submitting) return;
     setSubmitting(true);
-    await registerPackage({ flat, courier, photoUri });
-    setSubmitting(false);
-    navigation.navigate('SecurityDashboard');
+    try {
+      await registerPackage({ flat, courier });
+      navigation.navigate('SecurityDashboard');
+    } catch (err: any) {
+      Alert.alert('Failed', err.message || 'Could not register package');
+    } finally {
+      setSubmitting(false);
+    }
   };
+  const [flats, setFlats] = useState<{ flat: string; residentName: string }[]>([]);
+  const [showFlatPicker, setShowFlatPicker] = useState(false);
+
+  useEffect(() => {
+    getBuildingFlats().then(setFlats).catch(() => {});
+  }, []);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 120 }}>
@@ -42,7 +54,37 @@ export default function AddPackageScreen() {
 
       <View style={styles.form}>
         <Text style={styles.label}>Flat Number</Text>
-        <TextInput style={styles.input} placeholder="e.g. B-803" placeholderTextColor={colors.textMuted} value={flat} onChangeText={setFlat} />
+          <TouchableOpacity style={styles.input} onPress={() => setShowFlatPicker(true)}>
+            <Text style={{ color: flat ? colors.text : colors.textMuted, fontSize: 15 }}>
+              {flat ? `${flat}${flats.find((f) => f.flat === flat)?.residentName ? ` — ${flats.find((f) => f.flat === flat)?.residentName}` : ''}` : 'Select flat'}
+            </Text>
+          </TouchableOpacity>
+
+          <Modal visible={showFlatPicker} animationType="slide" transparent onRequestClose={() => setShowFlatPicker(false)}>
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalCard}>
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>Select Flat</Text>
+                  <TouchableOpacity onPress={() => setShowFlatPicker(false)}>
+                    <Ionicons name="close" size={22} color={colors.text} />
+                  </TouchableOpacity>
+                </View>
+                <ScrollView>
+                  {flats.map((f) => (
+                    <TouchableOpacity
+                      key={f.flat}
+                      style={styles.flatOption}
+                      onPress={() => { setFlat(f.flat); setShowFlatPicker(false); }}
+                    >
+                      <Text style={styles.flatOptionText}>{f.flat}</Text>
+                      <Text style={styles.flatOptionSub}>{f.residentName}</Text>
+                    </TouchableOpacity>
+                  ))}
+                  {flats.length === 0 && <Text style={{ padding: 20, color: colors.textMuted }}>No flats found</Text>}
+                </ScrollView>
+              </View>
+            </View>
+          </Modal>
 
         <Text style={styles.label}>Courier Company</Text>
         <TextInput style={styles.input} placeholder="e.g. Pathao, Daraz, Sundarban" placeholderTextColor={colors.textMuted} value={courier} onChangeText={setCourier} />
@@ -102,4 +144,11 @@ const styles = StyleSheet.create({
   submitButton: { backgroundColor: colors.primary, borderRadius: radius.md, paddingVertical: 16, alignItems: 'center', marginTop: spacing.xl },
   submitButtonDisabled: { opacity: 0.5 },
   submitButtonText: { color: '#fff', fontSize: 15, fontWeight: '700' },
-});
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  modalCard: { backgroundColor: colors.background, borderTopLeftRadius: radius.lg, borderTopRightRadius: radius.lg, padding: spacing.lg, maxHeight: '70%' },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md },
+  modalTitle: { fontSize: 18, fontWeight: '700', color: colors.text },
+  flatOption: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: colors.border },
+  flatOptionText: { fontSize: 15, fontWeight: '600', color: colors.text },
+  flatOptionSub: { fontSize: 12, color: colors.textMuted, marginTop: 2 },
+  });

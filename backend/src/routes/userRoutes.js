@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { protect, requireRole } = require('../middleware/authMiddleware');
-const { getUsers, createUser, updateUserStatus } = require('../controllers/userController');
+const { getUsers, createUser, updateUserStatus, getBuildingFlats } = require('../controllers/userController');
 
-// এই সব route এ শুধু logged-in manager ঢুকতে পারবে
-router.use(protect, requireRole('manager'));
+router.use(protect);
 
-router.get('/', getUsers);
-router.post('/', createUser);
-router.patch('/:id', updateUserStatus);
+router.get('/flats', requireRole('security', 'manager'), getBuildingFlats);
+
+router.get('/', requireRole('manager'), getUsers);
+router.post('/', requireRole('manager'), createUser);
+router.patch('/:id', requireRole('manager'), updateUserStatus);
 
 module.exports = router;

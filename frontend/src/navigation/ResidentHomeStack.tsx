@@ -13,6 +13,7 @@ import NoticesScreen from '../screens/resident/NoticesScreen';
 import VehiclesScreen from '../screens/resident/VehiclesScreen';
 import FamilyMembersScreen from '../screens/resident/FamilyMembersScreen';
 import SettingsScreen from '../screens/resident/SettingsScreen';
+import PackagesScreen from '../screens/resident/PackagesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +33,7 @@ export default function ResidentHomeStack() {
       <Stack.Screen name="Vehicles" component={VehiclesScreen} />
       <Stack.Screen name="FamilyMembers" component={FamilyMembersScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="Packages" component={PackagesScreen} />
     </Stack.Navigator>
   );
 }

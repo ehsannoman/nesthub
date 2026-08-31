@@ -37,3 +37,6 @@ app.use('/api/complaints', complaintRoutes);
 
 const noticeRoutes = require('./src/routes/noticeRoutes');
 app.use('/api/notices', noticeRoutes);
+
+const packageRoutes = require('./src/routes/packageRoutes');
+app.use('/api/packages', packageRoutes);

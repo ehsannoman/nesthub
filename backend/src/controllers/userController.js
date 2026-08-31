@@ -96,4 +96,17 @@ async function updateUserStatus(req, res) {
   }
 }
 
-module.exports = { getUsers, createUser, updateUserStatus };
+// GET /api/users/flats — Security/Manager দের জন্য, building এর সব resident এর flat list
+async function getBuildingFlats(req, res) {
+  try {
+    const residents = await User.find({ buildingId: req.user.buildingId, role: 'resident', flat: { $exists: true, $ne: '' } })
+      .select('flat name')
+      .sort({ flat: 1 });
+    res.json(residents.map((r) => ({ flat: r.flat, residentName: r.name })));
+  } catch (err) {
+    console.error('getBuildingFlats error:', err);
+    res.status(500).json({ message: 'Failed to fetch flats' });
+  }
+}
+
+module.exports = { getUsers, createUser, updateUserStatus, getBuildingFlats };
