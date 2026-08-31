@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Activi
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
+import { checkVehicleByPlate } from '../../api/vehicleService';
 
 export default function VehicleCheckScreen() {
   const navigation = useNavigation<any>();
@@ -10,14 +11,25 @@ export default function VehicleCheckScreen() {
   const [checking, setChecking] = useState(false);
   const [result, setResult] = useState<'found' | 'not-found' | null>(null);
 
+  const [ownerInfo, setOwnerInfo] = useState<{ ownerName?: string; flat?: string } | null>(null);
+
   const handleCheck = async () => {
     if (!plate.trim() || checking) return;
     setChecking(true);
     setResult(null);
-    // TODO (backend integration): replace করো — GET /api/vehicles?plate=...
-    await new Promise((r) => setTimeout(r, 700));
-    setResult(plate.trim().length % 2 === 0 ? 'found' : 'not-found');
-    setChecking(false);
+    try {
+      const data = await checkVehicleByPlate(plate.trim());
+      if (data.found) {
+        setOwnerInfo({ ownerName: data.ownerName, flat: data.flat });
+        setResult('found');
+      } else {
+        setResult('not-found');
+      }
+    } catch (err) {
+      setResult('not-found');
+    } finally {
+      setChecking(false);
+    }
   };
 
   return (
@@ -48,7 +60,9 @@ export default function VehicleCheckScreen() {
         {result === 'found' && (
           <View style={[styles.resultCard, { backgroundColor: '#EAF7EE' }]}>
             <Ionicons name="checkmark-circle" size={20} color={colors.success} />
-            <Text style={[styles.resultText, { color: colors.success }]}>Registered — Flat B-803, Owner: Rahat Ahmed</Text>
+            <Text style={[styles.resultText, { color: colors.success }]}>
+              Registered — Flat {ownerInfo?.flat}, Owner: {ownerInfo?.ownerName}
+            </Text>
           </View>
         )}
         {result === 'not-found' && (

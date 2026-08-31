@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Activi
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
-import { getVehicles, addVehicle, removeVehicle } from '../../api/residentService';
+import { getVehicles, addVehicle, removeVehicle } from '../../api/vehicleService';
 import { Vehicle } from '../../types';
 
 export default function VehiclesScreen() {
@@ -15,7 +15,9 @@ export default function VehiclesScreen() {
   const [type, setType] = useState<Vehicle['type']>('Car');
   const [saving, setSaving] = useState(false);
 
-  const load = () => getVehicles().then(setVehicles);
+  const load = () => getVehicles().then((data: any[]) => {
+    setVehicles(data.map((v) => ({ id: v._id, plateNumber: v.plateNumber, type: v.type, model: v.model })));
+  });
   useEffect(() => { load(); }, []);
 
   const handleAdd = async () => {

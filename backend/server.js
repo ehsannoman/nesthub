@@ -40,3 +40,6 @@ app.use('/api/notices', noticeRoutes);
 
 const packageRoutes = require('./src/routes/packageRoutes');
 app.use('/api/packages', packageRoutes);
+
+const vehicleRoutes = require('./src/routes/vehicleRoutes');
+app.use('/api/vehicles', vehicleRoutes);
