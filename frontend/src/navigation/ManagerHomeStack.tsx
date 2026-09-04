@@ -8,6 +8,7 @@ import ComplaintManageScreen from '../screens/manager/ComplaintManageScreen';
 import CreateBillScreen from '../screens/manager/CreateBillScreen';
 import FacilityBookingsScreen from '../screens/manager/FacilityBookingsScreen';
 import VisitorLogScreen from '../screens/manager/VisitorLogScreen';
+import ManageFacilitiesScreen from '../screens/manager/ManageFacilitiesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ export default function ManagerHomeStack() {
       <Stack.Screen name="CreateBill" component={CreateBillScreen} />
       <Stack.Screen name="FacilityBookings" component={FacilityBookingsScreen} />
       <Stack.Screen name="VisitorLog" component={VisitorLogScreen} />
+      <Stack.Screen name="ManageFacilities" component={ManageFacilitiesScreen} />
     </Stack.Navigator>
   );
 }

@@ -3,22 +3,24 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
-import { Booking } from '../../types';
 
 export default function BookingConfirmationScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
-  const booking: Booking = route.params.booking;
+  const booking: any = route.params.booking;
+  const isApproved = booking.status === 'approved';
 
   return (
-    <View style={styles.container}>
-      <View style={styles.iconWrap}>
-        <Ionicons name="time-outline" size={40} color={colors.warning} />
-      </View>
-      <Text style={styles.title}>Booking Requested</Text>
-      <Text style={styles.subtitle}>
-        Your request has been sent to the manager for approval. You'll get a notification once it's confirmed.
-      </Text>
+    <View style={styles.container}>      
+    <View style={[styles.iconWrap, isApproved && { backgroundColor: '#EAF7EE' }]}>
+      <Ionicons name={isApproved ? 'checkmark-circle-outline' : 'time-outline'} size={40} color={isApproved ? colors.success : colors.warning} />
+    </View>
+    <Text style={styles.title}>{isApproved ? 'Booking Confirmed!' : 'Booking Requested'}</Text>
+    <Text style={styles.subtitle}>
+      {isApproved
+        ? 'Your booking is confirmed. See you there!'
+        : "Your request has been sent to the manager for approval. You'll get a notification once it's confirmed."}
+    </Text>
 
       <View style={styles.card}>
         <View style={styles.row}>
@@ -33,11 +35,19 @@ export default function BookingConfirmationScreen() {
           <Text style={styles.label}>Time</Text>
           <Text style={styles.value}>{booking.timeSlot}</Text>
         </View>
+        {booking.totalPrice !== undefined && (
+          <View style={styles.row}>
+            <Text style={styles.label}>Total Price</Text>
+            <Text style={styles.value}>৳{booking.totalPrice}</Text>
+          </View>
+        )}
         <View style={styles.row}>
           <Text style={styles.label}>Status</Text>
-          <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>Pending Approval</Text>
-          </View>
+          <View style={[styles.statusBadge, isApproved && { backgroundColor: '#EAF7EE' }]}>
+          <Text style={[styles.statusText, isApproved && { color: colors.success }]}>
+            {isApproved ? 'Confirmed' : 'Pending Approval'}
+          </Text>
+        </View>
         </View>
       </View>
 

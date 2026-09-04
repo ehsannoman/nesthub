@@ -43,3 +43,9 @@ app.use('/api/packages', packageRoutes);
 
 const vehicleRoutes = require('./src/routes/vehicleRoutes');
 app.use('/api/vehicles', vehicleRoutes);
+
+const facilityRoutes = require('./src/routes/facilityRoutes');
+app.use('/api/facilities', facilityRoutes);
+
+const bookingRoutes = require('./src/routes/bookingRoutes');
+app.use('/api/bookings', bookingRoutes);

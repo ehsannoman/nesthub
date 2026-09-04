@@ -9,6 +9,7 @@ const menuItems = [
   { label: 'Facility Bookings', icon: 'calendar-outline' as const, route: 'FacilityBookings' },
   { label: 'Visitor Log', icon: 'people-outline' as const, route: 'VisitorLog' },
   { label: 'Generate Report', icon: 'bar-chart-outline' as const, route: 'AIAssistant' },
+  { label: 'Manage Facilities', icon: 'business-outline' as const, route: 'ManageFacilities' },
 ];
 
 export default function ManagerMoreScreen() {

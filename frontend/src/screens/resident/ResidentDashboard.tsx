@@ -288,7 +288,7 @@ export default function ResidentDashboard() {
               onPress={() => {
                 if (item.label === 'My Packages') {
                   navigation.navigate('Packages');
-                }
+                } else if (item.label === 'Facility Bookings') navigation.navigate('MyBookings');
               }}
             >
               {/* ICON + ARROW */}

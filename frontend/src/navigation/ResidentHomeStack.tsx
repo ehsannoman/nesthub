@@ -14,6 +14,7 @@ import VehiclesScreen from '../screens/resident/VehiclesScreen';
 import FamilyMembersScreen from '../screens/resident/FamilyMembersScreen';
 import SettingsScreen from '../screens/resident/SettingsScreen';
 import PackagesScreen from '../screens/resident/PackagesScreen';
+import MyBookingsScreen from '../screens/resident/MyBookingsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,7 @@ export default function ResidentHomeStack() {
       <Stack.Screen name="FamilyMembers" component={FamilyMembersScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Packages" component={PackagesScreen} />
+      <Stack.Screen name="MyBookings" component={MyBookingsScreen} />
     </Stack.Navigator>
   );
 }

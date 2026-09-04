@@ -217,6 +217,7 @@ export default function ManagerDashboard() {
                 else if (item.label === 'Add Complaint' || item.label === 'Maintenance Request') navigation.navigate('Maintenance');
                 else if (item.label === 'Facility Booking') navigation.navigate('FacilityBookings');
                 else if (item.label === 'Generate Report') navigation.navigate('AIAssistant');
+                else if (item.label === 'Facility Booking') navigation.navigate('FacilityBookings');
               }}
             >
               <View style={styles.quickIcon}>

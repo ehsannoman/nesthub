@@ -3,17 +3,37 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
-import { getBookingRequests, approveBookingRequest, rejectBookingRequest } from '../../api/managerService';
-import { BookingRequest } from '../../types';
+import { getBookings, updateBookingStatus } from '../../api/bookingService';
+
+function formatHour(h: number) {
+  const period = h >= 12 ? 'PM' : 'AM';
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  return `${hour12}:00 ${period}`;
+}
 
 export default function FacilityBookingsScreen() {
   const navigation = useNavigation<any>();
-  const [bookings, setBookings] = useState<BookingRequest[]>([]);
+  const [pending, setPending] = useState<any[]>([]);
 
-  const load = () => getBookingRequests().then(setBookings);
-  useEffect(() => { load(); }, []);
+  const load = () => {
+    getBookings().then((data: any[]) => {
+      const pendingOnly = data
+        .filter((b) => b.status === 'pending')
+        .map((b) => ({
+          id: b._id,
+          facilityName: b.facilityId?.name,
+          residentName: b.residentId?.name,
+          flat: b.flat,
+          date: b.date,
+          timeSlot: `${formatHour(b.startHour)} - ${formatHour(b.endHour)}`,
+        }));
+      setPending(pendingOnly);
+    });
+  };
 
-  const pending = bookings.filter((b) => b.status === 'pending');
+  useEffect(() => {
+    load();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -33,10 +53,22 @@ export default function FacilityBookingsScreen() {
             <Text style={styles.sub}>{b.residentName} · Flat {b.flat}</Text>
             <Text style={styles.sub}>{b.date} · {b.timeSlot}</Text>
             <View style={styles.actions}>
-              <TouchableOpacity style={styles.approveButton} onPress={async () => { await approveBookingRequest(b.id); load(); }}>
+              <TouchableOpacity
+                style={styles.approveButton}
+                onPress={async () => {
+                  await updateBookingStatus(b.id, 'approved');
+                  load();
+                }}
+              >
                 <Text style={styles.approveButtonText}>Approve</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.rejectButton} onPress={async () => { await rejectBookingRequest(b.id); load(); }}>
+              <TouchableOpacity
+                style={styles.rejectButton}
+                onPress={async () => {
+                  await updateBookingStatus(b.id, 'rejected');
+                  load();
+                }}
+              >
                 <Text style={styles.rejectButtonText}>Reject</Text>
               </TouchableOpacity>
             </View>
