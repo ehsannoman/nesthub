@@ -49,3 +49,6 @@ app.use('/api/facilities', facilityRoutes);
 
 const bookingRoutes = require('./src/routes/bookingRoutes');
 app.use('/api/bookings', bookingRoutes);
+
+const aiRoutes = require('./src/routes/aiRoutes');
+app.use('/api/ai', aiRoutes);
