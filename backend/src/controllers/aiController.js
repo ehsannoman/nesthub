@@ -3,47 +3,44 @@ const Complaint = require('../models/Complaint');
 const Visitor = require('../models/Visitor');
 const User = require('../models/User');
 
-// POST /api/ai/community-summary — real data নিয়ে Gemini দিয়ে বিশ্লেষণ করে
-async function getCommunitySummary(req, res) {
+// POST /api/ai/ask — custom বা suggested question নিয়ে real data দিয়ে উত্তর দেয়
+async function askCommunityAI(req, res) {
   try {
     const buildingId = req.user.buildingId;
+    const question = req.body.question || 'How is my community doing today?';
 
-    const [openComplaints, totalComplaints, todayVisitorsCount, totalResidents] = await Promise.all([
+    const [openComplaints, recentComplaints, totalVisitors, totalResidents] = await Promise.all([
       Complaint.countDocuments({ buildingId, status: { $nin: ['Resolved', 'Closed'] } }),
       Complaint.find({ buildingId }).sort({ createdAt: -1 }).limit(20),
       Visitor.countDocuments({ buildingId }),
       User.countDocuments({ buildingId, role: 'resident' }),
     ]);
 
-    // ক্যাটাগরি অনুযায়ী complaint গোনা, যাতে AI trend ধরতে পারে
     const categoryCounts = {};
-    totalComplaints.forEach((c) => {
+    recentComplaints.forEach((c) => {
       categoryCounts[c.category] = (categoryCounts[c.category] || 0) + 1;
     });
 
-    const prompt = `তুমি একটা apartment building এর community management assistant। নিচের real data দেখে ২-৩ লাইনের সংক্ষিপ্ত, professional English সামারি লিখো (Bangladesh এর apartment context এ):
+    const prompt = `তুমি একটা apartment building এর community management AI assistant। নিচের real data ব্যবহার করে manager এর প্রশ্নের উত্তর দাও, সংক্ষিপ্ত এবং professional English এ (৩-৫ বাক্য, কোনো ভূমিকা ছাড়া সরাসরি উত্তর):
 
+Data:
 - Open complaints: ${openComplaints}
 - Total residents: ${totalResidents}
-- Total visitors (all time): ${todayVisitorsCount}
-- Complaint categories breakdown: ${JSON.stringify(categoryCounts)}
+- Total visitors (all time): ${totalVisitors}
+- Recent complaint categories: ${JSON.stringify(categoryCounts)}
 
-যদি কোনো category তে complaint বেশি দেখা যায়, সেটা নিয়ে একটা সতর্কতা/insight যোগ করো। সংক্ষিপ্ত এবং কাজের কথা বলো, কোনো ভূমিকা ছাড়াই সরাসরি সামারি দাও।`;
+Manager's question: "${question}"
+
+যদি data তে কোনো trend/সমস্যা দেখা যায় (যেমন কোনো একটা category তে complaint বেশি), সেটা উল্লেখ করো এবং একটা suggestion দাও।`;
 
     const model = getModel();
     const result = await model.generateContent(prompt);
-    const insight = result.response.text();
+    const answer = result.response.text();
 
-    res.json({
-      openComplaints,
-      pendingMaintenance: openComplaints, // আপাতত একই, future এ আলাদা maintenance model হলে ভাগ হবে
-      todayVisitors: todayVisitorsCount,
-      occupancyRate: totalResidents > 0 ? 100 : 0, // placeholder, actual flat count দরকার সঠিক হিসাবের জন্য
-      insight,
-    });
+    res.json({ answer, openComplaints, totalVisitors, totalResidents });
   } catch (err) {
-    console.error('getCommunitySummary error:', err);
-    res.status(500).json({ message: 'Failed to generate community summary' });
+    console.error('askCommunityAI error:', err);
+    res.status(500).json({ message: 'Failed to get AI response' });
   }
 }
 
@@ -82,4 +79,4 @@ Manager এর draft: "${draft}"
   }
 }
 
-module.exports = { getCommunitySummary, generateNotice };
+module.exports = { askCommunityAI, generateNotice };

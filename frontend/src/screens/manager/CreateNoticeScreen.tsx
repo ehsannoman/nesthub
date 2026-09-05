@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, Switch } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, Switch,Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius } from '../../constants/theme';
 import { publishNotice } from '../../api/noticeService';
-import { generateNoticeFromDraft } from '../../api/managerService';
+import { generateNoticeFromDraft } from '../../api/aiService';
 
 export default function CreateNoticeScreen() {
   const navigation = useNavigation<any>();
@@ -18,11 +18,15 @@ export default function CreateNoticeScreen() {
   const handleAIPolish = async () => {
     if (!draft.trim() || generating) return;
     setGenerating(true);
-    const polished = await generateNoticeFromDraft(draft);
-    const [firstLine, ...rest] = polished.split('\n\n');
-    setTitle(firstLine.replace('Notice: ', ''));
-    setBody(rest.join('\n\n'));
-    setGenerating(false);
+    try {
+      const result = await generateNoticeFromDraft(draft);
+      setTitle(result.title);
+      setBody(result.body);
+    } catch (err: any) {
+      Alert.alert('Failed', err.message || 'Could not generate notice');
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handlePublish = async () => {
