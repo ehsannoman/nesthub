@@ -34,7 +34,12 @@ export default function AIAssistantScreen() {
   };
 
   return (
-    <KeyboardScreen contentContainerStyle={{ paddingBottom: 250 }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      contentContainerStyle={{ paddingBottom: 250 }}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={22} color={colors.text} />
@@ -88,7 +93,7 @@ export default function AIAssistantScreen() {
           <Text style={styles.answerText}>{answer}</Text>
         </View>
       )}
-    </KeyboardScreen>
+    </ScrollView>
   );
 }
 
