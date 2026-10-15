@@ -17,6 +17,7 @@ export default function ComplaintDetailScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const rawComplaint = route.params.complaint;
+  const fromList = route.params.fromList;
   const complaint = {
       ...rawComplaint,
       id: rawComplaint.id || rawComplaint._id,
@@ -28,17 +29,19 @@ export default function ComplaintDetailScreen() {
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: spacing.xl }}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.popToTop()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => (fromList ? navigation.goBack() : navigation.popToTop())} style={styles.backButton}>
           <Ionicons name="arrow-back" size={22} color={colors.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Complaint {complaint.id}</Text>
+        <Text style={styles.headerTitle}>Complaint #{String(complaint.id).slice(-6).toUpperCase()}</Text>
         <View style={{ width: 40 }} />
       </View>
 
-      <View style={styles.successBanner}>
-        <Ionicons name="checkmark-circle" size={20} color={colors.success} />
-        <Text style={styles.successText}>Complaint submitted successfully</Text>
-      </View>
+      {!fromList && (
+        <View style={styles.successBanner}>
+          <Ionicons name="checkmark-circle" size={20} color={colors.success} />
+          <Text style={styles.successText}>Complaint submitted successfully</Text>
+        </View>
+      )}
 
       {/* Summary card */}
       <View style={styles.card}>
@@ -84,8 +87,8 @@ export default function ComplaintDetailScreen() {
         })}
       </View>
 
-      <TouchableOpacity style={styles.doneButton} onPress={() => navigation.popToTop()}>
-        <Text style={styles.doneButtonText}>Back to Dashboard</Text>
+      <TouchableOpacity style={styles.doneButton} onPress={() => (fromList ? navigation.goBack() : navigation.popToTop())}>
+        <Text style={styles.doneButtonText}>{fromList ? 'Back to List' : 'Back to Dashboard'}</Text>
       </TouchableOpacity>
     </ScrollView>
   );

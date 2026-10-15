@@ -40,7 +40,6 @@ import FinanceScreen from '../screens/manager/FinanceScreen';
 import ManagerMoreScreen from '../screens/manager/ManagerMoreScreen';
 import ServicesScreen from '../screens/resident/ServicesScreen';
 import ActivityScreen from '../screens/resident/ActivityScreen';
-import NotificationsScreen from '../screens/resident/NotificationsScreen';
 import ProfileScreen from '../screens/resident/ProfileScreen';
 import SignupScreen from '../screens/auth/SignupScreen';
 import { useAuth } from '../context/AuthContext';
@@ -188,7 +187,6 @@ function ResidentTabs() {
       <Tab.Screen name="Home" component={ResidentHomeStack} />
       <Tab.Screen name="Services" component={ServicesScreen} />
       <Tab.Screen name="Activity" component={ActivityScreen} />
-      <Tab.Screen name="Notifications" component={NotificationsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );

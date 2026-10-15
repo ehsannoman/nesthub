@@ -110,25 +110,14 @@ export default function ResidentDashboard() {
             <TouchableOpacity
               style={styles.headerButton}
               activeOpacity={0.8}
+              onPress={() => navigation.navigate('Notifications')}
             >
               <Ionicons
                 name="notifications-outline"
                 size={23}
                 color={colors.text}
               />
-
               <View style={styles.notificationDot} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.headerButton}
-              activeOpacity={0.8}
-            >
-              <Ionicons
-                name="person-outline"
-                size={22}
-                color={colors.primary}
-              />
             </TouchableOpacity>
           </View>
         </View>
@@ -231,7 +220,7 @@ export default function ResidentDashboard() {
             Quick Actions
           </Text>
 
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Services')}>
             <Text style={styles.viewAll}>
               View All
             </Text>
@@ -288,7 +277,17 @@ export default function ResidentDashboard() {
               onPress={() => {
                 if (item.label === 'My Packages') {
                   navigation.navigate('Packages');
-                } else if (item.label === 'Facility Bookings') navigation.navigate('MyBookings');
+                } else if (item.label === 'Facility Bookings') {
+                  navigation.navigate('MyBookings');
+                } else if (item.label === 'Notices') {
+                  navigation.navigate('Notices');
+                } else if (item.label === 'My Vehicles') {
+                  navigation.navigate('Vehicles');
+                } else if (item.label === 'Visitors') {
+                  navigation.navigate('MyVisitors');
+                } else if (item.label === 'My Complaints') {
+                  navigation.navigate('MyComplaints');
+                }
               }}
             >
               {/* ICON + ARROW */}
@@ -360,14 +359,15 @@ export default function ResidentDashboard() {
         <View style={styles.noticeList}>
           {recentNotices.map((notice, index) => (
             <TouchableOpacity
-              key={notice.title}
-              style={[
-                styles.noticeRow,
-                index !== recentNotices.length - 1 &&
-                  styles.noticeBorder,
-              ]}
-              activeOpacity={0.8}
-            >
+                key={notice.title}
+                style={[
+                  styles.noticeRow,
+                  index !== recentNotices.length - 1 &&
+                    styles.noticeBorder,
+                ]}
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate('Notices')}
+              >
               <View style={styles.noticeIconWrap}>
                 <Ionicons
                   name={notice.icon}

@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius } from '../../constants/theme';
 import { getNotifications } from '../../api/residentService';
 import { AppNotification } from '../../types';
+import { useNavigation } from '@react-navigation/native';
 
 const typeIcon: Record<AppNotification['type'], { icon: keyof typeof Ionicons.glyphMap; bg: string; color: string }> = {
   visitor: { icon: 'person-outline', bg: '#E6F4F4', color: colors.primary },
@@ -15,13 +16,20 @@ const typeIcon: Record<AppNotification['type'], { icon: keyof typeof Ionicons.gl
 };
 
 export default function NotificationsScreen() {
+  const navigation = useNavigation<any>();
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
 
   useEffect(() => { getNotifications().then(setNotifications); }, []);
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { flexDirection: 'row', alignItems: 'center', gap: 12 }]}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ width: 40, height: 40, borderRadius: radius.full, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Ionicons name="arrow-back" size={22} color={colors.text} />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Notifications</Text>
       </View>
 

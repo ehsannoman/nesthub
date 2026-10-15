@@ -1,5 +1,5 @@
 // Backend এর ঠিকানা — phone/emulator এর জন্য PC এর local IP address লাগবে, "localhost" কাজ করবে না
-export const API_BASE_URL = 'http://192.168.0.103:5000/api';
+export const API_BASE_URL = 'http://192.168.0.105:5000/api';
 
 let authToken: string | null = null;
 
